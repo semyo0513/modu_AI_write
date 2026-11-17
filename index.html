@@ -1,0 +1,3348 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>모두의 AI 융합 글쓰기 웹앱 - 수행평가 & 생기부 에디션</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+    * { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    @media print {
+      body * { visibility: hidden; }
+      #print-area, #print-area * { visibility: visible; }
+      #print-area { position: absolute; left: 0; top: 0; width: 100%; }
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased selection:bg-blue-100 selection:text-blue-900">
+
+  <!-- ========================================================================= -->
+  <!-- 1. 최상단 네비게이션 헤더 -->
+  <!-- ========================================================================= -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <h1 class="font-bold text-lg text-slate-900 tracking-tight">모두의 AI 융합 글쓰기</h1>
+            <span class="px-2 py-0.5 text-xs font-semibold bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 rounded-full border border-blue-200">고도화 에디션</span>
+          </div>
+          <p class="text-xs text-slate-500 hidden sm:block">수정 이력 로그 · AI 1차 자동 채점 · 생기부 과세특 일괄 생성 · 동료평가</p>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <!-- 서버 연동 상태 뱃지 -->
+        <div id="server-status-pill" class="flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
+          <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+          <span id="server-status-text">로컬 데모 모드</span>
+        </div>
+
+        <!-- 서버 URL 설정 버튼 -->
+        <button onclick="openServerConfigModal()" class="p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition" title="Google Apps Script 웹앱 URL 설정">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+        </button>
+
+        <!-- 사용자 세션 정보 / 로그아웃 버튼 -->
+        <div id="user-session-area" class="hidden items-center space-x-2 pl-2 border-l border-slate-200">
+          <span id="user-display-name" class="text-xs font-semibold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-md"></span>
+          <button onclick="handleLogout()" class="px-2.5 py-1 text-xs font-medium text-rose-600 hover:bg-rose-50 rounded-md transition">로그아웃</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================= -->
+  <!-- 2. 주 컨테이너 (화면 전환) -->
+  <!-- ========================================================================= -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- ----------------------------------------------------------------------- -->
+    <!-- VIEW A: 통합 로그인 및 회원가입 화면 -->
+    <!-- ----------------------------------------------------------------------- -->
+    <div id="view-login" class="max-w-xl mx-auto my-8">
+      <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+        <div class="grid grid-cols-2 bg-slate-100 p-1.5 m-4 rounded-xl">
+          <button id="tab-btn-student" onclick="switchLoginTab('student')" class="py-2.5 text-sm font-bold rounded-lg transition-all shadow-sm bg-white text-blue-600">
+            👨‍🎓 학생 입장 (수행평가 참여)
+          </button>
+          <button id="tab-btn-teacher" onclick="switchLoginTab('teacher')" class="py-2.5 text-sm font-medium rounded-lg text-slate-600 hover:text-slate-900 transition-all">
+            👨‍🏫 교사 관리자 로그인
+          </button>
+        </div>
+
+        <!-- [A-1] 학생 로그인 폼 -->
+        <div id="form-student-login" class="p-6 sm:p-8 space-y-5">
+          <div class="text-center space-y-1">
+            <h2 class="text-xl font-bold text-slate-900">수행평가 글쓰기 시작하기</h2>
+            <p class="text-xs text-slate-500">선생님께서 등록해 주신 학교와 본인 정보를 정확히 입력해 주세요.</p>
+          </div>
+
+          <div class="space-y-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">소속 학교</label>
+              <select id="login-student-school" class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+                <option value="">학교를 선택하세요</option>
+              </select>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2.5">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">학년</label>
+                <input id="login-student-grade" type="number" min="1" max="6" placeholder="1" class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">반</label>
+                <input id="login-student-class" type="number" min="1" max="30" placeholder="2" class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">번호</label>
+                <input id="login-student-no" type="number" min="1" max="50" placeholder="15" class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">학생 이름</label>
+              <input id="login-student-name" type="text" placeholder="홍길동" class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+            </div>
+          </div>
+
+          <button onclick="handleStudentLoginSubmit()" class="w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/25 transition transform active:scale-[0.98] flex items-center justify-center space-x-2">
+            <span>활동 시작하기 (이어쓰기 복원)</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+          </button>
+
+          <!-- 빠른 테스트용 샘플 계정 -->
+          <div class="pt-4 border-t border-slate-100">
+            <p class="text-xs text-slate-500 mb-2 font-medium">⚡ 빠른 테스트용 샘플 학생 계정:</p>
+            <div class="flex flex-wrap gap-2">
+              <button onclick="quickFillStudent('진주중학교', 1, 2, 15, '홍길동')" class="px-2.5 py-1 text-xs bg-slate-100 hover:bg-blue-50 hover:text-blue-600 rounded-lg border border-slate-200 transition">
+                진주중 1-2 15번 홍길동 (작성중)
+              </button>
+              <button onclick="quickFillStudent('진주중학교', 1, 2, 16, '김수현')" class="px-2.5 py-1 text-xs bg-slate-100 hover:bg-emerald-50 hover:text-emerald-600 rounded-lg border border-slate-200 transition">
+                진주중 1-2 16번 김수현 (제출완료)
+              </button>
+              <button onclick="quickFillStudent('진주중학교', 1, 2, 17, '이준혁')" class="px-2.5 py-1 text-xs bg-slate-100 hover:bg-amber-50 hover:text-amber-600 rounded-lg border border-slate-200 transition">
+                진주중 1-2 17번 이준혁 (미시작)
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- [A-2] 교사 관리자 로그인 폼 -->
+        <div id="form-teacher-login" class="p-6 sm:p-8 space-y-5 hidden">
+          <div class="text-center space-y-1">
+            <h2 class="text-xl font-bold text-slate-900">교사 관리자 접속</h2>
+            <p class="text-xs text-slate-500">수행평가 출제 · AI 1차 자동 채점 · 생기부 과세특 일괄 생성 · 동료평가 관리</p>
+          </div>
+
+          <div class="space-y-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">교사 아이디</label>
+              <input id="login-admin-id" type="text" placeholder="teacher01" class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">비밀번호</label>
+              <input id="login-admin-pw" type="password" placeholder="••••••••" class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+            </div>
+          </div>
+
+          <button onclick="handleAdminLoginSubmit()" class="w-full py-3.5 px-4 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl shadow-lg shadow-slate-900/20 transition transform active:scale-[0.98] flex items-center justify-center space-x-2">
+            <span>관리자 대시보드 입장</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
+          </button>
+
+          <div class="flex items-center justify-between text-xs pt-2">
+            <button onclick="openSignupModal()" class="text-blue-600 hover:underline font-semibold">
+              신규 학교 교사 회원가입
+            </button>
+            <button onclick="quickFillAdmin('teacher01', 'teacher1234!')" class="text-slate-500 hover:text-slate-800">
+              ⚡ 샘플 교사 계정 자동입력
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 고도화 기능 안내 카드 -->
+      <div class="mt-6 bg-gradient-to-r from-blue-50/80 to-indigo-50/80 border border-blue-200 rounded-2xl p-4 text-xs text-blue-900 space-y-2">
+        <div class="flex items-center space-x-2 font-bold text-sm text-blue-900">
+          <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+          <span>새롭게 추가된 교사용 고도화 기능</span>
+        </div>
+        <p>• <b>루브릭 기반 AI 1차 자동 채점:</b> 교사의 루브릭 기준을 분석하여 학생별 가채점 점수 및 근거 코멘트 자동 도출</p>
+        <p>• <b>생활기록부(과세특) 일괄 생성:</b> 소요 시간, 퇴고 과정, AI 활용 역량 등 실데이터 기반 생기부 문안 일괄 생성 및 엑셀 다운로드</p>
+        <p>• <b>블라인드 익명 동료평가 (ON/OFF):</b> 제출 완료 학생 상호 피드백을 통해 협력적 메타인지 신장</p>
+      </div>
+    </div>
+
+
+    <!-- ----------------------------------------------------------------------- -->
+    <!-- VIEW B: 학생용 글쓰기 워크스페이스 & 동료평가 -->
+    <!-- ----------------------------------------------------------------------- -->
+    <div id="view-student" class="hidden space-y-4">
+      <!-- 상단 현황 바 -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-700" id="student-header-badge">중1 국어 수행평가</span>
+            <span id="student-status-badge" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">작성중</span>
+            <span id="student-peer-active-pill" class="hidden px-2 py-0.5 rounded-full text-[11px] font-semibold bg-purple-100 text-purple-700 border border-purple-200">동료평가 진행중</span>
+          </div>
+          <h2 id="student-task-title" class="text-lg sm:text-xl font-bold text-slate-900 mt-1">과제명을 불러오는 중...</h2>
+          <p id="student-info-text" class="text-xs text-slate-500 mt-0.5">진주중학교 1학년 2반 15번 홍길동</p>
+        </div>
+
+        <!-- 실시간 타이머 및 글자 수 통계 -->
+        <div class="flex flex-wrap items-center gap-2 sm:gap-4 bg-slate-50 px-4 py-2.5 rounded-xl border border-slate-200">
+          <div class="flex items-center space-x-1.5 text-xs">
+            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <span class="text-slate-500">총 작성시간:</span>
+            <span id="timer-total" class="font-mono font-bold text-slate-800 text-sm">00:00:00</span>
+          </div>
+
+          <div class="flex items-center space-x-1.5 text-xs pl-2 sm:border-l border-slate-200">
+            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+            <span class="text-slate-500">집중 타자:</span>
+            <span id="timer-active" class="font-mono font-bold text-slate-800 text-sm">00:00:00</span>
+          </div>
+
+          <div class="flex items-center space-x-1.5 text-xs pl-2 sm:border-l border-slate-200">
+            <span class="text-slate-500">글자수:</span>
+            <span id="stat-total-chars" class="font-mono font-bold text-blue-600 text-sm">0자</span>
+          </div>
+
+          <div id="save-sync-indicator" class="flex items-center space-x-1 text-[11px] text-slate-400 pl-2 sm:border-l border-slate-200">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            <span id="save-sync-text">로컬 자동 백업 중</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 이어쓰기 복원 배너 -->
+      <div id="banner-resume-notice" class="hidden bg-emerald-50 border border-emerald-200 rounded-xl p-3.5 flex items-center justify-between text-xs text-emerald-800">
+        <div class="flex items-center space-x-2">
+          <svg class="w-4 h-4 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          <span id="banner-resume-msg">이전에 작성하던 글을 안전하게 불러왔습니다.</span>
+        </div>
+        <button onclick="dismissResumeBanner()" class="text-emerald-600 hover:text-emerald-900 font-bold ml-2">닫기</button>
+      </div>
+
+      <!-- 제출 완료 상태 배너 & 동료평가 바로가기 버튼 -->
+      <div id="banner-submitted-notice" class="hidden bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-4 text-xs text-blue-900 space-y-3">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div class="flex items-center space-x-2 font-bold text-sm">
+            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+            <span>수행평가 제출이 완료되었습니다! (읽기 전용 모드)</span>
+          </div>
+
+          <!-- 동료평가 모달 열기 버튼 (과제에서 활성화된 경우만 표시) -->
+          <div id="student-peer-review-action-box" class="hidden">
+            <button onclick="openStudentPeerReviewModal()" class="px-3.5 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-bold shadow-md shadow-purple-500/20 transition flex items-center space-x-1.5 text-xs">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+              <span>👥 친구 글 읽고 상호 피드백 남기기</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 내가 받은 동료 피드백 영역 -->
+        <div id="student-received-reviews-box" class="hidden bg-white p-3 rounded-xl border border-purple-200 space-y-2">
+          <p class="font-bold text-purple-800 flex items-center space-x-1">
+            <span>💌 친구들이 남겨준 익명 피드백</span>
+            <span id="student-received-reviews-count" class="text-xs px-1.5 py-0.2 bg-purple-100 rounded-full">0</span>
+          </p>
+          <div id="student-received-reviews-list" class="space-y-1.5"></div>
+        </div>
+
+        <!-- 교사 피드백 -->
+        <div id="student-feedback-box" class="hidden p-3 bg-white rounded-xl border border-blue-200">
+          <p class="font-bold text-blue-700">👨‍🏫 선생님 총평 및 점수:</p>
+          <p id="student-feedback-content" class="text-slate-700 mt-1"></p>
+        </div>
+      </div>
+
+      <!-- 메인 글쓰기 에디터 & AI 조교 2단 레이아웃 -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- 좌측 글쓰기 영역 (8/12) -->
+        <div class="lg:col-span-8 space-y-5">
+          <!-- 과제 안내 & 체크리스트 접이식 -->
+          <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm">
+            <div class="flex items-center justify-between cursor-pointer" onclick="toggleTaskGuide()">
+              <div class="flex items-center space-x-2">
+                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                <h3 class="font-bold text-sm text-slate-800">과제 안내 및 자기점검 체크리스트</h3>
+              </div>
+              <span id="task-guide-toggle-icon" class="text-xs text-slate-400 font-semibold">펼치기 ▼</span>
+            </div>
+
+            <div id="task-guide-content" class="mt-4 pt-3 border-t border-slate-100 space-y-3 hidden">
+              <div>
+                <p class="text-xs font-bold text-slate-700 mb-1">📌 글쓰기 유의사항 및 마감:</p>
+                <p id="student-deadline-text" class="text-xs text-rose-600 font-semibold"></p>
+              </div>
+              <div>
+                <p class="text-xs font-bold text-slate-700 mb-2">✅ 제출 전 자기점검 항목:</p>
+                <div id="student-checklist-container" class="space-y-1.5"></div>
+              </div>
+              <div>
+                <p class="text-xs font-bold text-slate-700 mb-2">🎯 평가 기준 (루브릭 미리보기):</p>
+                <div id="student-rubric-container" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 동적 문단별 에디터 -->
+          <div id="editor-sections-container" class="space-y-4"></div>
+
+          <!-- 하단 액션 버튼 바 -->
+          <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="flex items-center space-x-2 text-xs text-slate-500">
+              <button onclick="openStudentRevisionModal()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-semibold flex items-center space-x-1.5 transition">
+                <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span>나의 수정 이력(타임라인) 보기</span>
+              </button>
+              <span id="student-rev-count-badge" class="font-bold text-blue-600">버전 0회 저장됨</span>
+            </div>
+
+            <div class="flex items-center space-x-2.5 w-full sm:w-auto">
+              <button id="btn-save-temp" onclick="saveStudentWriting('TEMP_SAVED')" class="flex-1 sm:flex-none px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition flex items-center justify-center space-x-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+                <span>임시 저장</span>
+              </button>
+              <button id="btn-submit-final" onclick="confirmFinalSubmit()" class="flex-1 sm:flex-none px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-md shadow-blue-500/20 transition flex items-center justify-center space-x-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                <span>수행평가 최종 제출</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 우측 AI 조교 패널 (4/12) -->
+        <div class="lg:col-span-4 space-y-4">
+          <div class="bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col h-[700px] overflow-hidden">
+            <div class="p-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white flex items-center justify-between">
+              <div class="flex items-center space-x-2.5">
+                <div class="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center backdrop-blur-sm">
+                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                </div>
+                <div>
+                  <h4 class="font-bold text-sm leading-tight">AI 글쓰기 사고 코치</h4>
+                  <p class="text-[11px] text-blue-100">대필 금지 · 질문 유도 코칭</p>
+                </div>
+              </div>
+              <button onclick="clearChatMessages()" class="text-xs text-blue-200 hover:text-white">지우기</button>
+            </div>
+
+            <div class="p-2.5 bg-slate-50 border-b border-slate-200">
+              <p class="text-[11px] font-semibold text-slate-500 mb-1.5">⚡ 빠른 코칭 질문:</p>
+              <div class="flex flex-wrap gap-1.5">
+                <button onclick="sendQuickChat('지금까지 쓴 글의 논거가 타당한지 점검해줘.')" class="px-2 py-1 text-[11px] bg-white hover:bg-blue-50 hover:text-blue-600 rounded-md border border-slate-200 text-slate-700 transition">💡 논거 점검</button>
+                <button onclick="sendQuickChat('내 주장과 반대되는 입장의 가장 큰 반론은 무엇일까?')" class="px-2 py-1 text-[11px] bg-white hover:bg-blue-50 hover:text-blue-600 rounded-md border border-slate-200 text-slate-700 transition">🔍 예상 반론</button>
+                <button onclick="sendQuickChat('서론에서 문제 상황을 더 생생하게 표현할 방법이 있을까?')" class="px-2 py-1 text-[11px] bg-white hover:bg-blue-50 hover:text-blue-600 rounded-md border border-slate-200 text-slate-700 transition">✍️ 서론 도입</button>
+                <button onclick="sendQuickChat('결론에서 실천할 수 있는 현실적인 해결 방안을 고민하고 있어.')" class="px-2 py-1 text-[11px] bg-white hover:bg-blue-50 hover:text-blue-600 rounded-md border border-slate-200 text-slate-700 transition">🌱 결론 제언</button>
+              </div>
+            </div>
+
+            <div id="chat-messages-container" class="flex-1 p-4 overflow-y-auto space-y-3 custom-scrollbar text-xs">
+              <div class="bg-blue-50 border border-blue-100 rounded-xl p-3 text-slate-700 leading-relaxed">
+                👋 안녕하세요! <b>AI 글쓰기 사고 코치</b>입니다. 주장의 논리적 오류를 점검하고 새로운 시각을 질문해 드릴게요!
+              </div>
+            </div>
+
+            <div class="p-3 bg-white border-t border-slate-200">
+              <div class="flex items-end space-x-2">
+                <textarea id="chat-input-text" rows="2" placeholder="글쓰기 중 고민되는 점을 적어보세요..." class="flex-1 p-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none"></textarea>
+                <button onclick="sendStudentChatMessage()" class="p-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-sm transition">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ----------------------------------------------------------------------- -->
+    <!-- VIEW C: 교사 관리자 대시보드 (수행평가 + AI 1차 채점 + 생기부 일괄 생성) -->
+    <!-- ----------------------------------------------------------------------- -->
+    <div id="view-teacher" class="hidden space-y-6">
+      <!-- 상단 현황 카드 4종 -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <p class="text-xs font-semibold text-slate-500">전체 등록 학생</p>
+          <p id="stat-teacher-total-students" class="text-2xl font-bold text-slate-900 mt-1">0명</p>
+          <span class="text-[11px] text-slate-400">명렬표 등록 기준</span>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <p class="text-xs font-semibold text-emerald-600">제출 완료</p>
+          <p id="stat-teacher-submitted" class="text-2xl font-bold text-emerald-600 mt-1">0명</p>
+          <span id="stat-teacher-submit-rate" class="text-[11px] text-emerald-500 font-medium">제출률 0%</span>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <p class="text-xs font-semibold text-amber-600">작성 진행 중</p>
+          <p id="stat-teacher-writing" class="text-2xl font-bold text-amber-600 mt-1">0명</p>
+          <span class="text-[11px] text-amber-500 font-medium">임시저장 상태</span>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <p class="text-xs font-semibold text-purple-600">동료평가 상태</p>
+          <p id="stat-teacher-peer-status" class="text-xl font-bold text-purple-600 mt-1">활성화</p>
+          <span id="stat-teacher-peer-subtext" class="text-[11px] text-purple-500 font-medium">블라인드 진행중</span>
+        </div>
+      </div>
+
+      <!-- 관리자 탭 메뉴 -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="flex border-b border-slate-200 px-4 bg-slate-50 overflow-x-auto">
+          <button id="admin-tab-monitor" onclick="switchAdminTab('monitor')" class="py-3 px-4 text-xs font-bold border-b-2 border-blue-600 text-blue-600 whitespace-nowrap">
+            📊 학생 수행평가 모니터링 & 채점
+          </button>
+          <button id="admin-tab-records" onclick="switchAdminTab('records')" class="py-3 px-4 text-xs font-medium border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap">
+            📝 생활기록부(과세특) 일괄 생성
+          </button>
+          <button id="admin-tab-settings" onclick="switchAdminTab('settings')" class="py-3 px-4 text-xs font-medium border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap">
+            ⚙️ 과제 및 AI / 동료평가 설정
+          </button>
+          <button id="admin-tab-roster" onclick="switchAdminTab('roster')" class="py-3 px-4 text-xs font-medium border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap">
+            👥 학생 명렬표 관리 (CSV)
+          </button>
+          <button id="admin-tab-super" onclick="switchAdminTab('super')" class="py-3 px-4 text-xs font-medium border-b-2 border-transparent text-purple-600 hover:text-purple-900 whitespace-nowrap hidden">
+            👑 슈퍼관리자 학교 승인
+          </button>
+        </div>
+
+        <!-- [C-1] 탭 1: 학생 수행평가 모니터링 & 채점 -->
+        <div id="admin-pane-monitor" class="p-6 space-y-4">
+          <!-- 툴바: 필터 + 일괄 채점 & 내보내기 버튼 -->
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+            <div class="flex flex-wrap items-center gap-2">
+              <select id="filter-teacher-grade" onchange="renderTeacherStudentTable()" class="text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg">
+                <option value="ALL">전체 학년</option>
+                <option value="1">1학년</option>
+                <option value="2">2학년</option>
+                <option value="3">3학년</option>
+              </select>
+              <select id="filter-teacher-class" onchange="renderTeacherStudentTable()" class="text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg">
+                <option value="ALL">전체 반</option>
+                <option value="1">1반</option>
+                <option value="2">2반</option>
+                <option value="3">3반</option>
+              </select>
+              <select id="filter-teacher-status" onchange="renderTeacherStudentTable()" class="text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg">
+                <option value="ALL">모든 상태</option>
+                <option value="SUBMITTED">제출완료</option>
+                <option value="TEMP_SAVED">작성중</option>
+                <option value="NOT_STARTED">미시작</option>
+              </select>
+              <input id="search-teacher-student" oninput="renderTeacherStudentTable()" type="text" placeholder="학생 이름 검색..." class="text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg w-36">
+            </div>
+
+            <!-- 신규 고도화 일괄 액션 버튼들 -->
+            <div class="flex flex-wrap items-center gap-2 justify-end">
+              <button onclick="executeBatchAiEvaluation()" class="px-3.5 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg text-xs font-bold flex items-center space-x-1.5 shadow-sm transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                <span>🤖 AI 1차 일괄 자동 채점</span>
+              </button>
+
+              <button onclick="openBatchRecordsTabDirectly()" class="px-3.5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold flex items-center space-x-1.5 shadow-sm transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                <span>📝 과세특 일괄 생성</span>
+              </button>
+
+              <button onclick="exportAllWritingsToCSV()" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold flex items-center space-x-1 shadow-sm transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                <span>CSV 다운로드</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 학생 테이블 -->
+          <div class="overflow-x-auto border border-slate-200 rounded-xl">
+            <table class="w-full text-xs text-left">
+              <thead class="bg-slate-50 text-slate-700 uppercase font-semibold border-b border-slate-200">
+                <tr>
+                  <th class="px-4 py-3">학번 / 이름</th>
+                  <th class="px-4 py-3">제출 상태</th>
+                  <th class="px-4 py-3 text-center">총 작성시간</th>
+                  <th class="px-4 py-3 text-center">타자 활성시간</th>
+                  <th class="px-4 py-3 text-center">글자수</th>
+                  <th class="px-4 py-3 text-center">수정 기록</th>
+                  <th class="px-4 py-3 text-center">AI 가채점</th>
+                  <th class="px-4 py-3 text-center">최종 점수</th>
+                  <th class="px-4 py-3 text-right">상세 및 평가</th>
+                </tr>
+              </thead>
+              <tbody id="teacher-students-tbody" class="divide-y divide-slate-100 bg-white"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- [C-2] 탭 2: 생활기록부(과세특) 일괄 생성 및 관리 -->
+        <div id="admin-pane-records" class="p-6 space-y-5 hidden">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-purple-50/60 border border-purple-200 p-4 rounded-xl">
+            <div>
+              <h4 class="font-bold text-sm text-purple-900 flex items-center space-x-1.5">
+                <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                <span>학생 생활기록부 '과목별 세부능력 및 특기사항(과세특)' 일괄 관리</span>
+              </h4>
+              <p class="text-xs text-purple-700 mt-1">학생의 작성 시간, 수정 퇴고 횟수, 논증 발전 과정을 AI가 분석하여 교육부 기재요령에 맞는 문안을 일괄 생성합니다.</p>
+            </div>
+
+            <div class="flex items-center space-x-2">
+              <button onclick="executeBatchStudentRecordGeneration()" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold shadow-md transition flex items-center space-x-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                <span>⚡ 제출완료 학생 과세특 일괄 생성</span>
+              </button>
+              <button onclick="exportStudentRecordsToCSV()" class="px-3.5 py-2 bg-white hover:bg-slate-100 text-purple-900 border border-purple-300 rounded-lg text-xs font-bold transition">
+                📥 나이스용 CSV 다운로드
+              </button>
+            </div>
+          </div>
+
+          <!-- 과세특 학생별 카드 리스트 -->
+          <div id="batch-records-container" class="space-y-3">
+            <!-- 동적 렌더링 -->
+          </div>
+        </div>
+
+        <!-- [C-3] 탭 3: 과제 및 AI / 동료평가 설정 -->
+        <div id="admin-pane-settings" class="p-6 space-y-6 hidden">
+          <div class="max-w-3xl space-y-6">
+            <!-- 프리셋 버튼 -->
+            <div class="bg-blue-50/50 border border-blue-200 rounded-xl p-4">
+              <p class="text-xs font-bold text-blue-900 mb-2">⚡ 원클릭 글쓰기 과제 템플릿 불러오기</p>
+              <div class="flex flex-wrap gap-2">
+                <button onclick="loadAssignmentPreset('persuasive')" class="px-3 py-1.5 text-xs bg-white hover:bg-blue-600 hover:text-white rounded-lg border border-blue-200 text-blue-800 font-medium transition">① 중학교 설득하는 글쓰기</button>
+                <button onclick="loadAssignmentPreset('report')" class="px-3 py-1.5 text-xs bg-white hover:bg-blue-600 hover:text-white rounded-lg border border-blue-200 text-blue-800 font-medium transition">② 고교 탐구 보고서</button>
+                <button onclick="loadAssignmentPreset('critique')" class="px-3 py-1.5 text-xs bg-white hover:bg-blue-600 hover:text-white rounded-lg border border-blue-200 text-blue-800 font-medium transition">③ 독서 비평문 및 서평</button>
+                <button onclick="loadAssignmentPreset('ai_ethics')" class="px-3 py-1.5 text-xs bg-white hover:bg-blue-600 hover:text-white rounded-lg border border-blue-200 text-blue-800 font-medium transition">④ AI 윤리 쟁점 에세이</button>
+              </div>
+            </div>
+
+            <!-- 기본 과제 정보 -->
+            <div class="space-y-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">수행평가 과제명</label>
+                <input id="setting-task-title" type="text" class="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none">
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">수행평가 제출 마감일시</label>
+                <input id="setting-deadline" type="text" placeholder="2026-12-31 23:59" class="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none">
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">글쓰기 입력 문단 구조 (쉼표로 구분)</label>
+                <input id="setting-writing-structure" type="text" class="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none">
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">학생 자기점검 체크리스트 (한 줄에 하나씩 입력)</label>
+                <textarea id="setting-checklist" rows="3" class="w-full text-xs p-3 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+              </div>
+
+              <!-- 루브릭 기준 (AI 1차 자동 채점의 기준이 됨) -->
+              <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                <div class="flex items-center justify-between">
+                  <label class="block text-xs font-bold text-slate-700">🎯 루브릭 평가 기준 (AI 자동 채점용 JSON)</label>
+                  <span class="text-[11px] text-blue-600 font-semibold">이 기준에 맞춰 AI가 1차 채점을 수행합니다</span>
+                </div>
+                <textarea id="setting-rubric-json" rows="4" class="w-full text-xs p-3 font-mono bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+              </div>
+
+              <!-- [신규 고도화 3] 동료평가 활성화/비활성화 설정 -->
+              <div class="p-4 bg-purple-50/50 border border-purple-200 rounded-xl space-y-3">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <h4 class="text-xs font-bold text-purple-900">👥 블라인드 익명 동료평가(상호 피드백) 설정</h4>
+                    <p class="text-[11px] text-purple-600">최종 제출을 마친 학생이 같은 반 친구들의 글을 읽고 피드백을 남기도록 허용합니다.</p>
+                  </div>
+                  <!-- ON/OFF 스위치 -->
+                  <label class="relative inline-flex items-center cursor-pointer">
+                    <input id="setting-peer-toggle" type="checkbox" checked onchange="handlePeerToggleChange()" class="sr-only peer">
+                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                  </label>
+                </div>
+
+                <div id="setting-peer-detail-box" class="space-y-2 pt-2 border-t border-purple-100">
+                  <label class="block text-[11px] font-semibold text-purple-800">동료평가 안내 및 최소 글자수</label>
+                  <input id="setting-peer-min-chars" type="number" min="10" max="100" value="20" class="w-24 text-xs px-2.5 py-1.5 bg-white border border-purple-200 rounded-lg">
+                  <span class="text-[11px] text-purple-600 ml-1">자 이상 작성</span>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">AI 챗봇 시스템 지침 (대필 금지 및 코칭 지침)</label>
+                <textarea id="setting-system-prompt" rows="3" class="w-full text-xs p-3 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+              </div>
+
+              <!-- AI API Key 설정 -->
+              <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold text-slate-800">🤖 AI 모델 API 연동 설정</span>
+                  <span class="text-[11px] text-slate-400">구글 시트(GAS)에 안전하게 보관됨</span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label class="block text-[11px] font-semibold text-slate-600 mb-1">AI 제공사</label>
+                    <select id="setting-api-provider" class="w-full text-xs px-3 py-2 bg-white border border-slate-300 rounded-lg">
+                      <option value="GEMINI">Google Gemini (추천: 무료 할당량 제공)</option>
+                      <option value="OPENAI">OpenAI ChatGPT (GPT-4o mini)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-[11px] font-semibold text-slate-600 mb-1">API Key 입력 (비워둘 시 기존 키 유지)</label>
+                    <input id="setting-api-key" type="password" placeholder="AIzaSy... 또는 sk-..." class="w-full text-xs px-3 py-2 bg-white border border-slate-300 rounded-lg">
+                  </div>
+                </div>
+              </div>
+
+              <button onclick="saveAdminSettingsSubmit()" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-md transition">
+                과제 및 동료평가 설정 저장하기
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- [C-4] 탭 4: 학생 명렬표 관리 (CSV) -->
+        <div id="admin-pane-roster" class="p-6 space-y-6 hidden">
+          <div class="max-w-2xl space-y-4">
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
+              <h4 class="font-bold text-xs text-slate-800">1단계: 학생 명렬 CSV 양식 내려받기</h4>
+              <p class="text-xs text-slate-500">엑셀에서 한글이 깨지지 않는 UTF-8 BOM 인코딩 양식 파일입니다.</p>
+              <button onclick="downloadStudentCsvTemplate()" class="px-4 py-2 bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 rounded-lg text-xs font-bold flex items-center space-x-1.5 transition">
+                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                <span>📥 학생 명렬 양식 다운로드 (CSV)</span>
+              </button>
+            </div>
+
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+              <h4 class="font-bold text-xs text-slate-800">2단계: 작성한 명렬 파일 업로드</h4>
+              <input id="input-roster-csv" type="file" accept=".csv" onchange="handleRosterFileSelect(event)" class="text-xs text-slate-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+
+              <div id="roster-preview-area" class="hidden mt-3 space-y-2">
+                <p class="text-xs font-bold text-slate-700">업로드 미리보기 (<span id="roster-preview-count">0</span>명 감지됨):</p>
+                <div class="max-h-48 overflow-y-auto border border-slate-200 rounded-lg bg-white p-2">
+                  <table class="w-full text-[11px] text-left">
+                    <thead><tr class="text-slate-500 border-b"><th>학년</th><th>반</th><th>번호</th><th>이름</th></tr></thead>
+                    <tbody id="roster-preview-tbody"></tbody>
+                  </table>
+                </div>
+                <button onclick="submitRosterUpload()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition">
+                  명렬 데이터 DB 일괄 등록
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- [C-5] 탭 5: 슈퍼관리자 메뉴 -->
+        <div id="admin-pane-super" class="p-6 space-y-4 hidden">
+          <h4 class="font-bold text-sm text-slate-900">전체 학교 관리자 승인 현황</h4>
+          <div class="overflow-x-auto border border-slate-200 rounded-xl">
+            <table class="w-full text-xs text-left">
+              <thead class="bg-slate-50 text-slate-700">
+                <tr>
+                  <th class="px-4 py-2.5">아이디</th>
+                  <th class="px-4 py-2.5">교사명</th>
+                  <th class="px-4 py-2.5">소속 학교</th>
+                  <th class="px-4 py-2.5">권한</th>
+                  <th class="px-4 py-2.5">승인 상태</th>
+                  <th class="px-4 py-2.5">가입 일시</th>
+                  <th class="px-4 py-2.5 text-right">관리</th>
+                </tr>
+              </thead>
+              <tbody id="super-admin-tbody" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+
+  <!-- ========================================================================= -->
+  <!-- 3. 모달 팝업들 -->
+  <!-- ========================================================================= -->
+
+  <!-- [MODAL 1] 학생 평가 & 채점 모달 (AI 1차 자동 채점 + 생기부 초안 + Replay 타임라인) -->
+  <div id="modal-eval" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+    <div class="bg-white w-full max-w-5xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden my-auto max-h-[92vh] flex flex-col">
+      <!-- 헤더 -->
+      <div class="px-6 py-4 bg-slate-900 text-white flex items-center justify-between flex-shrink-0">
+        <div class="flex items-center space-x-3">
+          <div class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center font-bold">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <h3 id="eval-modal-student-name" class="font-bold text-base">홍길동 (진주중 1-2 15번)</h3>
+              <span id="eval-modal-status-badge" class="px-2 py-0.5 text-xs font-semibold rounded-full bg-emerald-500/20 text-emerald-300">제출완료</span>
+            </div>
+            <p id="eval-modal-task-title" class="text-xs text-slate-400">과제명</p>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-2">
+          <button onclick="printStudentWork()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium rounded-lg transition flex items-center space-x-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+            <span>인쇄 / PDF</span>
+          </button>
+          <button onclick="closeEvalModal()" class="text-slate-400 hover:text-white p-1 rounded-lg">✕</button>
+        </div>
+      </div>
+
+      <!-- 본문 스크롤 영역 -->
+      <div class="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
+
+        <!-- 지표 카드 -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs">
+          <div><span class="text-slate-500">총 작성 시간:</span><p id="eval-time-total" class="font-bold text-slate-800 text-sm mt-0.5">00:00</p></div>
+          <div><span class="text-slate-500">실제 타자 시간:</span><p id="eval-time-active" class="font-bold text-slate-800 text-sm mt-0.5">00:00</p></div>
+          <div><span class="text-slate-500">수정 이력 버전:</span><p id="eval-rev-count" class="font-bold text-blue-600 text-sm mt-0.5">0개 스냅샷</p></div>
+          <div><span class="text-slate-500">AI 챗봇 질문:</span><p id="eval-chat-count" class="font-bold text-purple-600 text-sm mt-0.5">0건</p></div>
+        </div>
+
+        <!-- Replay 타임라인 슬라이더 -->
+        <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <h4 class="font-bold text-xs text-slate-900 flex items-center space-x-1.5">
+              <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <span>과정 분석: 수정 기록 히스토리 (Replay 슬라이더)</span>
+            </h4>
+            <span id="eval-timeline-label" class="text-xs font-semibold text-blue-600">최종 제출본 (현재)</span>
+          </div>
+
+          <div class="px-2 pt-2">
+            <input id="eval-timeline-slider" type="range" min="0" max="0" value="0" oninput="handleTimelineSliderChange(this.value)" class="w-full accent-blue-600 cursor-pointer">
+            <div class="flex justify-between text-[11px] text-slate-400 mt-1">
+              <span>작성 시작 (초안)</span>
+              <span id="eval-timeline-rev-step">버전 0 / 0</span>
+              <span>최종본</span>
+            </div>
+          </div>
+
+          <div id="eval-snapshot-info" class="text-[11px] text-slate-500 bg-slate-50 p-2.5 rounded-lg flex items-center justify-between">
+            <span>저장 시각: -</span>
+            <span>글자수: -</span>
+            <span>저장 구분: 자동저장</span>
+          </div>
+        </div>
+
+        <!-- 본문 뷰 -->
+        <div class="space-y-3">
+          <h4 class="font-bold text-xs text-slate-900">작성 글 본문</h4>
+          <div id="eval-work-sections" class="space-y-3"></div>
+        </div>
+
+        <!-- [신규] 교사 루브릭 채점 & AI 1차 자동 채점 패널 -->
+        <div class="bg-blue-50/60 rounded-xl border border-blue-200 p-5 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h4 class="font-bold text-sm text-blue-900">👨‍🏫 교사 수행평가 채점 및 루브릭</h4>
+              <p class="text-xs text-blue-600">루브릭 기준에 맞춰 AI가 1차 가채점을 수행할 수 있습니다.</p>
+            </div>
+            <div class="flex items-center space-x-3">
+              <button onclick="runSingleStudentAiEvaluation()" class="px-3.5 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg text-xs font-bold shadow-sm transition flex items-center space-x-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                <span>🤖 AI 1차 자동 채점 실행</span>
+              </button>
+              <div class="text-sm font-bold text-blue-800">
+                총점: <span id="eval-total-score-display" class="text-lg text-blue-600">0</span> / <span id="eval-max-score-display">100</span>점
+              </div>
+            </div>
+          </div>
+
+          <!-- AI 가채점 피드백 안내 바 (존재 시 노출) -->
+          <div id="eval-ai-feedback-banner" class="hidden p-3 bg-indigo-50 border border-indigo-200 rounded-xl text-xs text-indigo-900 space-y-1">
+            <div class="flex items-center justify-between font-bold">
+              <span>🤖 AI 1차 분석 의견</span>
+              <button onclick="applyAiScoresToForm()" class="text-xs bg-indigo-600 text-white px-2 py-0.5 rounded hover:bg-indigo-700 font-semibold">✓ 점수 폼에 일괄 적용</button>
+            </div>
+            <p id="eval-ai-feedback-text" class="text-indigo-800 leading-relaxed"></p>
+          </div>
+
+          <div id="eval-rubric-form-container" class="space-y-3"></div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">교사 종합 의견 및 수행평가 피드백</label>
+            <textarea id="eval-teacher-feedback" rows="3" placeholder="학생의 논리적 전개, AI 활용 과정, 보완할 점에 대한 피드백을 입력하세요..." class="w-full text-xs p-3 bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+          </div>
+
+          <div class="flex justify-end">
+            <button onclick="saveTeacherEvaluationSubmit()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md transition">
+              평가 및 피드백 저장하기
+            </button>
+          </div>
+        </div>
+
+        <!-- [신규] 생활기록부 과세특 초안 생성 섹션 -->
+        <div class="bg-purple-50/60 rounded-xl border border-purple-200 p-5 space-y-3">
+          <div class="flex items-center justify-between">
+            <div>
+              <h4 class="font-bold text-sm text-purple-900">📝 생활기록부 '과목별 세부능력 및 특기사항' 초안</h4>
+              <p class="text-xs text-purple-700">작성 시간, 수정 이력, AI 질의 내역을 종합 분석하여 생성됩니다.</p>
+            </div>
+            <button onclick="generateSingleStudentRecord()" class="px-3.5 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold shadow-sm transition flex items-center space-x-1">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+              <span>과세특 초안 생성</span>
+            </button>
+          </div>
+
+          <textarea id="eval-student-record-draft" rows="4" placeholder="[과세특 초안 생성] 버튼을 누르면 교육부 훈령 양식의 문안이 자동으로 작성됩니다..." class="w-full text-xs p-3 bg-white border border-purple-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:outline-none leading-relaxed"></textarea>
+
+          <div class="flex items-center justify-between text-xs">
+            <span id="eval-record-char-count" class="text-purple-600 font-semibold">0자 / 500자 (권장 300~500자)</span>
+            <div class="space-x-2">
+              <button onclick="copyStudentRecordToClipboard()" class="px-3 py-1 bg-white border border-purple-300 text-purple-800 rounded-lg hover:bg-purple-50 font-semibold transition">
+                📋 클립보드 복사
+              </button>
+              <button onclick="saveStudentRecordDraftSubmit()" class="px-4 py-1 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-bold transition">
+                초안 저장
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 학생-AI 대화 로그 및 동료평가 로그 확인 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- AI 대화 로그 -->
+          <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+            <h4 class="font-bold text-xs text-slate-800">🤖 학생-AI 대화 로그 (<span id="eval-chat-count-label">0</span>건)</h4>
+            <div id="eval-chat-logs-container" class="space-y-2 max-h-48 overflow-y-auto custom-scrollbar text-xs"></div>
+          </div>
+
+          <!-- 동료평가 수신 내역 -->
+          <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+            <h4 class="font-bold text-xs text-slate-800">👥 친구들이 남긴 동료평가 피드백 (<span id="eval-peer-count-label">0</span>건)</h4>
+            <div id="eval-peer-reviews-container" class="space-y-2 max-h-48 overflow-y-auto custom-scrollbar text-xs"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- [MODAL 2] 학생용 블라인드 익명 동료평가 모달 -->
+  <div id="modal-student-peer" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-3xl rounded-2xl shadow-xl border border-slate-200 overflow-hidden max-h-[90vh] flex flex-col">
+      <div class="px-5 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <svg class="w-5 h-5 text-purple-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+          <h3 class="font-bold text-sm">블라인드 동료평가 (상호 피드백)</h3>
+        </div>
+        <button onclick="closeStudentPeerReviewModal()" class="text-purple-200 hover:text-white">✕</button>
+      </div>
+
+      <div class="p-6 overflow-y-auto flex-1 custom-scrollbar space-y-6 text-xs">
+        <div class="bg-purple-50 p-3.5 rounded-xl border border-purple-200 text-purple-900 leading-relaxed">
+          🔒 <b>블라인드 평가 안내:</b> 작성자의 학번과 이름은 완전히 익명으로 제공됩니다. 친구의 글을 꼼꼼히 읽고 칭찬과 발전적인 질문을 남겨주세요!
+        </div>
+
+        <div id="peer-targets-container" class="space-y-6">
+          <!-- 동적 배정된 글 1~2편 및 피드백 입력 폼 -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- [MODAL 3] 학생 본인의 수정 이력 모달 -->
+  <div id="modal-student-revision" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-2xl rounded-2xl shadow-xl border border-slate-200 overflow-hidden max-h-[85vh] flex flex-col">
+      <div class="px-5 py-3.5 bg-slate-100 border-b border-slate-200 flex items-center justify-between">
+        <h3 class="font-bold text-xs text-slate-800">나의 글쓰기 수정 기록 (버전 히스토리)</h3>
+        <button onclick="closeStudentRevisionModal()" class="text-slate-400 hover:text-slate-600 text-sm">✕</button>
+      </div>
+      <div id="student-rev-list-container" class="p-4 overflow-y-auto space-y-2.5 flex-1 custom-scrollbar text-xs"></div>
+    </div>
+  </div>
+
+
+  <!-- [MODAL 4] 교사 회원가입 모달 -->
+  <div id="modal-signup" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-xl border border-slate-200 p-6 space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="font-bold text-base text-slate-900">신규 학교 교사 회원가입</h3>
+        <button onclick="closeSignupModal()" class="text-slate-400 hover:text-slate-600">✕</button>
+      </div>
+      <div class="space-y-3">
+        <div><label class="block text-xs font-semibold text-slate-700 mb-1">소속 학교명</label><input id="signup-school-name" type="text" placeholder="예: 진주중학교" class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg"></div>
+        <div><label class="block text-xs font-semibold text-slate-700 mb-1">교사 성명</label><input id="signup-teacher-name" type="text" placeholder="예: 김국어" class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg"></div>
+        <div><label class="block text-xs font-semibold text-slate-700 mb-1">아이디</label><input id="signup-admin-id" type="text" placeholder="teacher02" class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg"></div>
+        <div><label class="block text-xs font-semibold text-slate-700 mb-1">비밀번호</label><input id="signup-password" type="password" placeholder="••••••••" class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg"></div>
+        <div><label class="block text-xs font-semibold text-slate-700 mb-1">슈퍼 관리자 인증코드 (선택)</label><input id="signup-super-code" type="password" placeholder="일반 교사는 비워두세요" class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg"></div>
+      </div>
+      <button onclick="handleAdminSignupSubmit()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md transition">가입 신청하기</button>
+    </div>
+  </div>
+
+
+  <!-- [MODAL 5] Google Apps Script URL 설정 모달 -->
+  <div id="modal-server-config" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-lg rounded-2xl shadow-xl border border-slate-200 p-6 space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="font-bold text-base text-slate-900">Google Apps Script 백엔드 설정</h3>
+        <button onclick="closeServerConfigModal()" class="text-slate-400 hover:text-slate-600">✕</button>
+      </div>
+      <p class="text-xs text-slate-500 leading-relaxed">구글 시트의 Web App 배포 URL을 입력하세요. 비워두면 로컬 데모 모드로 작동합니다.</p>
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">웹 앱 배포 URL</label>
+        <input id="input-server-url" type="text" placeholder="https://script.google.com/macros/s/.../exec" class="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl font-mono focus:ring-2 focus:ring-blue-500">
+      </div>
+      <div class="flex flex-wrap justify-between items-center gap-2 pt-2">
+        <button onclick="testServerConnection()" class="px-3 py-1.5 text-xs font-semibold text-blue-600 hover:bg-blue-50 rounded-lg transition">연결 테스트</button>
+        <div class="flex items-center space-x-1.5">
+          <button onclick="resetServerUrlToDefault()" class="px-2.5 py-1.5 text-xs font-semibold text-purple-600 hover:bg-purple-50 rounded-lg transition" title="현재 배포된 구글 시트 웹앱 URL로 복원">기본 서버 복원</button>
+          <button onclick="resetServerUrlToDemo()" class="px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg transition">데모 모드</button>
+          <button onclick="saveServerUrlConfig()" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition">저장</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- [MODAL 6] 최종 제출 확인 다이얼로그 -->
+  <div id="modal-confirm-submit" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-xl border border-slate-200 p-6 space-y-4">
+      <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center mx-auto">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+      </div>
+      <div class="text-center space-y-1">
+        <h3 class="font-bold text-base text-slate-900">수행평가를 최종 제출하시겠습니까?</h3>
+        <p class="text-xs text-slate-500">제출 후에는 수정이 불가능하며, 친구들과 동료평가를 진행할 수 있습니다.</p>
+      </div>
+      <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs text-slate-600 space-y-1">
+        <p>• 총 작성 시간: <span id="confirm-modal-time" class="font-bold text-slate-900">00:00:00</span></p>
+        <p>• 총 글자 수: <span id="confirm-modal-chars" class="font-bold text-blue-600">0자</span></p>
+      </div>
+      <div class="flex space-x-2">
+        <button onclick="closeConfirmModal()" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition">다시 검토하기</button>
+        <button onclick="executeFinalSubmit()" class="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-md transition">네, 제출합니다</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- [OVERLAY 7] 중복 클릭 방지 로딩 오버레이 -->
+  <div id="blocking-loading-overlay" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white max-w-sm w-full rounded-2xl shadow-2xl border border-slate-200 p-6 text-center space-y-4">
+      <div class="relative w-16 h-16 mx-auto">
+        <div class="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+        <div class="absolute inset-0 flex items-center justify-center text-blue-600">
+          <svg class="w-6 h-6 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+        </div>
+      </div>
+      <div class="space-y-1">
+        <h4 id="loading-modal-title" class="font-bold text-base text-slate-900">처리 중입니다...</h4>
+        <p id="loading-modal-desc" class="text-xs text-slate-500">잠시만 기다려 주세요.</p>
+      </div>
+      <div class="bg-blue-50/80 rounded-xl p-3 border border-blue-100 text-left">
+        <span class="text-[10px] font-bold text-blue-700 uppercase tracking-wider block mb-0.5">💡 수행평가 글쓰기 팁</span>
+        <p id="loading-tip-text" class="text-xs text-blue-900 leading-snug">AI가 제시한 통계와 사례는 인터넷 검색으로 사실 여부를 꼭 확인하세요.</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========================================================================= -->
+  <!-- 4. 인쇄 전용 영역 (#print-area) -->
+  <!-- ========================================================================= -->
+  <div id="print-area" class="hidden p-8 font-sans max-w-4xl mx-auto">
+    <div class="border-b-2 border-slate-900 pb-4 mb-6">
+      <div class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold">수행평가 글쓰기 최종 결과물</h1>
+        <span class="text-sm font-semibold border border-slate-900 px-3 py-1">공식 보관용</span>
+      </div>
+      <div class="grid grid-cols-2 gap-2 mt-4 text-sm">
+        <p>• <b>소속 학교:</b> <span id="print-school"></span></p>
+        <p>• <b>학생 성명:</b> <span id="print-student"></span></p>
+        <p>• <b>과제명:</b> <span id="print-task"></span></p>
+        <p>• <b>제출 일시:</b> <span id="print-submitted-at"></span></p>
+        <p>• <b>총 소요 시간:</b> <span id="print-total-time"></span></p>
+        <p>• <b>수정 이력 횟수:</b> <span id="print-rev-count"></span></p>
+      </div>
+    </div>
+    <div id="print-content" class="space-y-6 text-sm"></div>
+    <div class="border-t-2 border-slate-900 pt-4 mt-8 space-y-2">
+      <h3 class="font-bold text-base">지도교사 평가 및 생활기록부 기재 사항</h3>
+      <p>• <b>평가 점수:</b> <span id="print-score" class="font-bold text-lg"></span></p>
+      <div class="border border-slate-300 p-4 rounded bg-slate-50 min-h-[80px]">
+        <p class="font-semibold text-slate-800 text-xs mb-1">■ 지도교사 총평:</p>
+        <p id="print-feedback" class="whitespace-pre-wrap"></p>
+      </div>
+      <div class="border border-purple-200 p-4 rounded bg-purple-50/50 min-h-[80px]">
+        <p class="font-semibold text-purple-900 text-xs mb-1">■ 과목별 세부능력 및 특기사항(과세특) 문안:</p>
+        <p id="print-record" class="whitespace-pre-wrap text-purple-950"></p>
+      </div>
+      <div class="text-right pt-6 text-sm">
+        <p>지도교사 확인: ____________________ (서명)</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========================================================================= -->
+  <!-- 5. JavaScript 핵심 로직 (고도화 기능 통합) -->
+  <!-- ========================================================================= -->
+  <script>
+    const DEFAULT_GAS_URL = 'https://script.google.com/macros/s/AKfycbw-na2U9KSE9Sd52KxSRjwiu7xjej2d1HR4F27Bvy9PzqFMUur3xTID9NNUndwRQQNFPw/exec';
+    const STORAGE_KEY_SERVER_URL = 'AGY_WRITING_SERVER_URL';
+    const STORAGE_KEY_STUDENT_DRAFT = 'AGY_WRITING_STUDENT_DRAFT';
+    const STORAGE_KEY_STUDENT_SESSION = 'AGY_WRITING_STUDENT_SESSION';
+    const STORAGE_KEY_ADMIN_SESSION = 'AGY_WRITING_ADMIN_SESSION';
+
+    const state = {
+      serverUrl: localStorage.getItem(STORAGE_KEY_SERVER_URL) !== null ? localStorage.getItem(STORAGE_KEY_SERVER_URL) : DEFAULT_GAS_URL,
+      currentUser: null,
+      currentTask: null,
+      currentWriting: null,
+      currentRevisions: [],
+      chatMessages: [],
+      schools: ['진주중학교', '창원고등학교', '교육청본부'],
+
+      // 학생 타이머
+      timerInterval: null,
+      activeTypingInterval: null,
+      totalTimeSeconds: 0,
+      activeTypingSeconds: 0,
+      lastTypingTimestamp: 0,
+
+      // 교사 화면
+      teacherStudents: [],
+      evalCurrentStudent: null,
+      evalTimelineRevisions: [],
+
+      // 신규: 동료평가 대상 목록
+      peerReviewTargets: [],
+      studentReceivedReviews: [],
+
+      loadingTipInterval: null
+    };
+
+    const WRITING_TIPS = [
+      'AI가 제시한 통계와 사례는 인터넷 검색을 통해 사실 여부를 꼭 검증하세요.',
+      '설득하는 글에서는 상대방의 입장을 먼저 인정하고 재반박할 때 훨씬 큰 신뢰를 줍니다.',
+      '서론에서 질문이나 일상 속 생생한 경험으로 시작하면 독자의 몰입도가 높아집니다.',
+      '본론 1과 본론 2가 서로 겹치지 않는 독립적인 근거인지 점검해 보세요.',
+      '자신의 글을 소리 내어 읽어보면 어색한 문장과 중복된 어휘를 쉽게 찾을 수 있습니다.',
+      '결론에서는 본론의 요약뿐만 아니라 우리가 실천할 수 있는 구체적 행동 방안을 제시해 보세요.'
+    ];
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      updateServerStatusBadge();
+      initMockDatabaseIfNeeded();
+      await loadInitData();
+      restoreSavedSession();
+      setupTypingActivityTracker();
+    });
+
+    function updateServerStatusBadge() {
+      const pill = document.getElementById('server-status-pill');
+      const text = document.getElementById('server-status-text');
+      if (state.serverUrl && state.serverUrl.trim() !== '') {
+        pill.className = 'flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200';
+        pill.querySelector('span').className = 'w-2 h-2 rounded-full bg-emerald-500 animate-pulse';
+        text.innerText = '구글 시트 실서버 연동';
+      } else {
+        pill.className = 'flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200';
+        pill.querySelector('span').className = 'w-2 h-2 rounded-full bg-amber-500 animate-pulse';
+        text.innerText = '로컬 데모 모드 (체험)';
+      }
+    }
+
+    async function apiCall(action, payload = {}, loadingTitle = '요청을 처리하고 있습니다...') {
+      return withBlockingLoading(async () => {
+        if (state.serverUrl && state.serverUrl.trim() !== '') {
+          try {
+            const bodyData = { action, ...payload };
+            const response = await fetch(state.serverUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+              body: JSON.stringify(bodyData)
+            });
+            return await response.json();
+          } catch (err) {
+            console.warn('실서버 통신 실패, 로컬 Mock으로 전환:', err);
+            return mockApiCall(action, payload);
+          }
+        } else {
+          await sleep(350);
+          return mockApiCall(action, payload);
+        }
+      }, loadingTitle);
+    }
+
+    async function withBlockingLoading(asyncFn, title = '처리 중입니다...', desc = '잠시만 기다려 주세요.') {
+      showBlockingLoading(title, desc);
+      try {
+        return await asyncFn();
+      } catch (err) {
+        alert('처리 중 오류가 발생했습니다: ' + err.message);
+        throw err;
+      } finally {
+        hideBlockingLoading();
+      }
+    }
+
+    function showBlockingLoading(title, desc) {
+      document.getElementById('loading-modal-title').innerText = title;
+      document.getElementById('loading-modal-desc').innerText = desc;
+      document.getElementById('blocking-loading-overlay').classList.remove('hidden');
+
+      let tipIdx = 0;
+      document.getElementById('loading-tip-text').innerText = WRITING_TIPS[0];
+      state.loadingTipInterval = setInterval(() => {
+        tipIdx = (tipIdx + 1) % WRITING_TIPS.length;
+        document.getElementById('loading-tip-text').innerText = WRITING_TIPS[tipIdx];
+      }, 2500);
+    }
+
+    function hideBlockingLoading() {
+      document.getElementById('blocking-loading-overlay').classList.add('hidden');
+      if (state.loadingTipInterval) {
+        clearInterval(state.loadingTipInterval);
+        state.loadingTipInterval = null;
+      }
+    }
+
+    function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+    function switchLoginTab(tab) {
+      const btnStudent = document.getElementById('tab-btn-student');
+      const btnTeacher = document.getElementById('tab-btn-teacher');
+      const formStudent = document.getElementById('form-student-login');
+      const formTeacher = document.getElementById('form-teacher-login');
+
+      if (tab === 'student') {
+        btnStudent.className = 'py-2.5 text-sm font-bold rounded-lg transition-all shadow-sm bg-white text-blue-600';
+        btnTeacher.className = 'py-2.5 text-sm font-medium rounded-lg text-slate-600 hover:text-slate-900 transition-all';
+        formStudent.classList.remove('hidden');
+        formTeacher.classList.add('hidden');
+      } else {
+        btnTeacher.className = 'py-2.5 text-sm font-bold rounded-lg transition-all shadow-sm bg-white text-slate-900';
+        btnStudent.className = 'py-2.5 text-sm font-medium rounded-lg text-slate-600 hover:text-slate-900 transition-all';
+        formTeacher.classList.remove('hidden');
+        formStudent.classList.add('hidden');
+      }
+    }
+
+    async function loadInitData() {
+      const res = await apiCall('getInitData', {}, '기본 설정을 불러오는 중입니다...');
+      if (res && res.success) {
+        state.schools = res.schools || ['진주중학교', '창원고등학교', '교육청본부'];
+        populateSchoolDropdown();
+      }
+    }
+
+    function populateSchoolDropdown() {
+      const select = document.getElementById('login-student-school');
+      select.innerHTML = '<option value="">학교를 선택하세요</option>';
+      state.schools.forEach(sch => {
+        const opt = document.createElement('option');
+        opt.value = sch;
+        opt.innerText = sch;
+        select.appendChild(opt);
+      });
+    }
+
+    function quickFillStudent(sch, g, c, n, name) {
+      document.getElementById('login-student-school').value = sch;
+      document.getElementById('login-student-grade').value = g;
+      document.getElementById('login-student-class').value = c;
+      document.getElementById('login-student-no').value = n;
+      document.getElementById('login-student-name').value = name;
+    }
+
+    function quickFillAdmin(id, pw) {
+      document.getElementById('login-admin-id').value = id;
+      document.getElementById('login-admin-pw').value = pw;
+    }
+
+    async function handleStudentLoginSubmit() {
+      const schoolName = document.getElementById('login-student-school').value;
+      const grade = document.getElementById('login-student-grade').value;
+      const classNo = document.getElementById('login-student-class').value;
+      const studentNo = document.getElementById('login-student-no').value;
+      const studentName = document.getElementById('login-student-name').value;
+
+      if (!schoolName || !grade || !classNo || !studentNo || !studentName) {
+        alert('모든 학생 정보를 입력해 주세요.');
+        return;
+      }
+
+      const res = await apiCall('studentLogin', {
+        schoolName, grade, classNo, studentNo, studentName
+      }, '학생 정보를 확인하고 글을 불러오는 중입니다...');
+
+      if (res && res.success) {
+        state.currentUser = { type: 'student', data: res.studentInfo };
+        state.currentTask = res.task;
+        state.currentWriting = res.writing || null;
+        sessionStorage.setItem(STORAGE_KEY_STUDENT_SESSION, JSON.stringify(state.currentUser));
+
+        showView('student');
+        initStudentWorkspace();
+      } else {
+        alert(res.message || '로그인에 실패했습니다.');
+      }
+    }
+
+    async function handleAdminLoginSubmit() {
+      const adminId = document.getElementById('login-admin-id').value;
+      const password = document.getElementById('login-admin-pw').value;
+
+      if (!adminId || !password) {
+        alert('아이디와 비밀번호를 입력해 주세요.');
+        return;
+      }
+
+      const res = await apiCall('adminLogin', { adminId, password }, '교사 관리자 인증 중입니다...');
+      if (res && res.success) {
+        state.currentUser = { type: 'admin', data: res.adminInfo };
+        sessionStorage.setItem(STORAGE_KEY_ADMIN_SESSION, JSON.stringify(state.currentUser));
+
+        showView('teacher');
+        initTeacherDashboard(res.taskConfig);
+      } else {
+        alert(res.message || '아이디 또는 비밀번호가 올바르지 않습니다.');
+      }
+    }
+
+    function handleLogout() {
+      if (confirm('로그아웃 하시겠습니까?')) {
+        stopTimers();
+        state.currentUser = null;
+        state.currentTask = null;
+        state.currentWriting = null;
+        sessionStorage.removeItem(STORAGE_KEY_STUDENT_SESSION);
+        sessionStorage.removeItem(STORAGE_KEY_ADMIN_SESSION);
+        showView('login');
+      }
+    }
+
+    function showView(viewName) {
+      document.getElementById('view-login').classList.add('hidden');
+      document.getElementById('view-student').classList.add('hidden');
+      document.getElementById('view-teacher').classList.add('hidden');
+
+      const userArea = document.getElementById('user-session-area');
+      const userDisplay = document.getElementById('user-display-name');
+
+      if (viewName === 'login') {
+        document.getElementById('view-login').classList.remove('hidden');
+        userArea.classList.add('hidden');
+      } else if (viewName === 'student') {
+        document.getElementById('view-student').classList.remove('hidden');
+        userArea.classList.remove('hidden');
+        userArea.classList.add('flex');
+        const st = state.currentUser.data;
+        userDisplay.innerText = `${st.schoolName} ${st.grade}-${st.classNo} ${st.studentName}`;
+      } else if (viewName === 'teacher') {
+        document.getElementById('view-teacher').classList.remove('hidden');
+        userArea.classList.remove('hidden');
+        userArea.classList.add('flex');
+        const ad = state.currentUser.data;
+        userDisplay.innerText = `${ad.schoolName} ${ad.teacherName} 선생님`;
+      }
+    }
+
+    function restoreSavedSession() {
+      const studentSess = sessionStorage.getItem(STORAGE_KEY_STUDENT_SESSION);
+      const adminSess = sessionStorage.getItem(STORAGE_KEY_ADMIN_SESSION);
+
+      if (studentSess) {
+        try {
+          const user = JSON.parse(studentSess);
+          quickFillStudent(user.data.schoolName, user.data.grade, user.data.classNo, user.data.studentNo, user.data.studentName);
+        } catch (e) {}
+      } else if (adminSess) {
+        try {
+          const user = JSON.parse(adminSess);
+          quickFillAdmin(user.data.adminId, '');
+        } catch (e) {}
+      }
+    }
+
+    /**
+     * =========================================================================
+     * 학생 워크스페이스 & 동료평가 연동
+     * =========================================================================
+     */
+    function initStudentWorkspace() {
+      const task = state.currentTask;
+      const writing = state.currentWriting;
+      const student = state.currentUser.data;
+
+      document.getElementById('student-header-badge').innerText = `${student.grade}학년 수행평가`;
+      document.getElementById('student-task-title').innerText = task.taskTitle;
+      document.getElementById('student-info-text').innerText = `${student.schoolName} ${student.grade}학년 ${student.classNo}반 ${student.studentNo}번 ${student.studentName}`;
+      document.getElementById('student-deadline-text').innerText = `제출 기한: ${task.deadline || '2026-12-31 23:59까지'}`;
+
+      // 동료평가 활성화 배지
+      if (task.peerReviewEnabled) {
+        document.getElementById('student-peer-active-pill').classList.remove('hidden');
+      } else {
+        document.getElementById('student-peer-active-pill').classList.add('hidden');
+      }
+
+      // 체크리스트 렌더링
+      const checkContainer = document.getElementById('student-checklist-container');
+      checkContainer.innerHTML = '';
+      (task.checklistItems || []).forEach((item, idx) => {
+        const div = document.createElement('label');
+        div.className = 'flex items-start space-x-2 text-xs text-slate-700 cursor-pointer p-1 hover:bg-slate-50 rounded';
+        div.innerHTML = `<input type="checkbox" id="chk-item-${idx}" class="mt-0.5 rounded text-blue-600 focus:ring-blue-500"><span>${item}</span>`;
+        checkContainer.appendChild(div);
+      });
+
+      // 루브릭 기준 렌더링
+      const rubricContainer = document.getElementById('student-rubric-container');
+      rubricContainer.innerHTML = '';
+      (task.rubricItems || []).forEach(r => {
+        const card = document.createElement('div');
+        card.className = 'p-2 bg-slate-50 rounded-lg border border-slate-200';
+        card.innerHTML = `<div class="flex justify-between font-bold text-slate-800"><span>${r.criterion}</span><span class="text-blue-600">${r.maxScore}점</span></div><p class="text-[11px] text-slate-500 mt-0.5">${r.desc}</p>`;
+        rubricContainer.appendChild(card);
+      });
+
+      // 에디터 섹션 렌더링
+      const editorContainer = document.getElementById('editor-sections-container');
+      editorContainer.innerHTML = '';
+      const content = (writing && writing.contentJson) || {};
+      const structure = task.writingStructure || ['제목', '서론', '본론', '결론'];
+
+      structure.forEach((secName, idx) => {
+        const isTitle = secName.includes('제목');
+        const val = content[secName] || '';
+        const secDiv = document.createElement('div');
+        secDiv.className = 'bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-2';
+        secDiv.innerHTML = `
+          <div class="flex items-center justify-between">
+            <label class="font-bold text-xs sm:text-sm text-slate-800 flex items-center space-x-1.5">
+              <span class="w-5 h-5 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-[11px]">${idx + 1}</span>
+              <span>${secName}</span>
+            </label>
+            <span id="char-count-${idx}" class="text-[11px] text-slate-400 font-mono">0자</span>
+          </div>
+          ${isTitle ?
+            `<input id="sec-input-${idx}" data-section="${secName}" type="text" value="${escapeHtml(val)}" placeholder="${secName}을 입력하세요..." class="w-full text-sm font-semibold px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none transition section-input">` :
+            `<textarea id="sec-input-${idx}" data-section="${secName}" rows="5" placeholder="${secName} 내용을 서술하세요..." class="w-full text-xs sm:text-sm p-3.5 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none transition resize-y section-input">${escapeHtml(val)}</textarea>`
+          }
+        `;
+        editorContainer.appendChild(secDiv);
+      });
+
+      document.querySelectorAll('.section-input').forEach((el, idx) => {
+        el.addEventListener('input', () => {
+          handleSectionInput(idx);
+          recordTypingActivity();
+        });
+        updateCharCount(idx);
+      });
+
+      const isSubmitted = writing && writing.status === 'SUBMITTED';
+      updateStudentStatusUI(isSubmitted ? 'SUBMITTED' : (writing ? 'TEMP_SAVED' : 'NEW'));
+
+      if (writing && !isSubmitted) {
+        document.getElementById('banner-resume-notice').classList.remove('hidden');
+        document.getElementById('banner-resume-msg').innerText = `지난번에 작성하던 글(${writing.updatedAt || '최근 저장본'})을 불러왔습니다.`;
+      }
+
+      state.totalTimeSeconds = (writing && writing.totalTimeSeconds) || 0;
+      state.activeTypingSeconds = (writing && writing.activeTypingSeconds) || 0;
+      startTimers();
+
+      document.getElementById('student-rev-count-badge').innerText = `버전 ${(writing && writing.revisionCount) || 0}회 저장됨`;
+      updateTotalCharCount();
+
+      // 제출 완료된 학생의 동료평가 데이터 로드
+      if (isSubmitted && task.peerReviewEnabled) {
+        loadStudentReceivedReviews(writing.writingId);
+      }
+    }
+
+    function toggleTaskGuide() {
+      const content = document.getElementById('task-guide-content');
+      const icon = document.getElementById('task-guide-toggle-icon');
+      if (content.classList.contains('hidden')) {
+        content.classList.remove('hidden');
+        icon.innerText = '접기 ▲';
+      } else {
+        content.classList.add('hidden');
+        icon.innerText = '펼치기 ▼';
+      }
+    }
+
+    function dismissResumeBanner() {
+      document.getElementById('banner-resume-notice').classList.add('hidden');
+    }
+
+    function updateStudentStatusUI(status) {
+      const badge = document.getElementById('student-status-badge');
+      const btnSave = document.getElementById('btn-save-temp');
+      const btnSubmit = document.getElementById('btn-submit-final');
+      const bannerSubmitted = document.getElementById('banner-submitted-notice');
+      const peerActionBox = document.getElementById('student-peer-review-action-box');
+
+      if (status === 'SUBMITTED') {
+        badge.className = 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800';
+        badge.innerText = '최종제출 완료';
+        btnSave.disabled = true;
+        btnSubmit.disabled = true;
+        btnSave.classList.add('opacity-50', 'cursor-not-allowed');
+        btnSubmit.classList.add('opacity-50', 'cursor-not-allowed');
+        bannerSubmitted.classList.remove('hidden');
+
+        document.querySelectorAll('.section-input').forEach(el => el.setAttribute('readonly', 'true'));
+
+        // 과제에서 동료평가가 켜져 있으면 상호 피드백 버튼 노출
+        if (state.currentTask && state.currentTask.peerReviewEnabled) {
+          peerActionBox.classList.remove('hidden');
+        }
+
+        if (state.currentWriting && state.currentWriting.teacherFeedback) {
+          document.getElementById('student-feedback-box').classList.remove('hidden');
+          document.getElementById('student-feedback-content').innerText = state.currentWriting.teacherFeedback;
+        }
+      } else if (status === 'TEMP_SAVED') {
+        badge.className = 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800';
+        badge.innerText = '임시저장 (작성중)';
+        bannerSubmitted.classList.add('hidden');
+        peerActionBox.classList.add('hidden');
+      } else {
+        badge.className = 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800';
+        badge.innerText = '작성 시작';
+        bannerSubmitted.classList.add('hidden');
+        peerActionBox.classList.add('hidden');
+      }
+    }
+
+    function startTimers() {
+      stopTimers();
+      state.timerInterval = setInterval(() => {
+        state.totalTimeSeconds++;
+        document.getElementById('timer-total').innerText = formatSeconds(state.totalTimeSeconds);
+      }, 1000);
+
+      state.activeTypingInterval = setInterval(() => {
+        const now = Date.now();
+        if (now - state.lastTypingTimestamp < 3000) {
+          state.activeTypingSeconds++;
+          document.getElementById('timer-active').innerText = formatSeconds(state.activeTypingSeconds);
+        }
+      }, 1000);
+    }
+
+    function stopTimers() {
+      if (state.timerInterval) clearInterval(state.timerInterval);
+      if (state.activeTypingInterval) clearInterval(state.activeTypingInterval);
+    }
+
+    function recordTypingActivity() {
+      state.lastTypingTimestamp = Date.now();
+      const draft = getCurrentEditorContent();
+      localStorage.setItem(STORAGE_KEY_STUDENT_DRAFT, JSON.stringify(draft));
+      document.getElementById('save-sync-text').innerText = '로컬 백업 중...';
+      setTimeout(() => {
+        document.getElementById('save-sync-text').innerText = '로컬 백업 완료';
+      }, 400);
+    }
+
+    function setupTypingActivityTracker() {
+      setInterval(() => {
+        if (state.currentUser && state.currentUser.type === 'student' && state.currentWriting?.status !== 'SUBMITTED') {
+          saveStudentWriting('TEMP_SAVED', true, 'AUTO_SNAPSHOT_5MIN');
+        }
+      }, 300000);
+    }
+
+    function handleSectionInput(idx) {
+      updateCharCount(idx);
+      updateTotalCharCount();
+    }
+
+    function updateCharCount(idx) {
+      const el = document.getElementById(`sec-input-${idx}`);
+      const countEl = document.getElementById(`char-count-${idx}`);
+      if (el && countEl) countEl.innerText = `${el.value.length}자`;
+    }
+
+    function updateTotalCharCount() {
+      let total = 0;
+      let nonSpace = 0;
+      document.querySelectorAll('.section-input').forEach(el => {
+        const val = el.value || '';
+        total += val.length;
+        nonSpace += val.replace(/\s/g, '').length;
+      });
+      document.getElementById('stat-total-chars').innerText = `${total}자 (공백제외 ${nonSpace}자)`;
+      return { total, nonSpace };
+    }
+
+    function getCurrentEditorContent() {
+      const content = {};
+      document.querySelectorAll('.section-input').forEach(el => {
+        content[el.getAttribute('data-section')] = el.value || '';
+      });
+      return content;
+    }
+
+    async function saveStudentWriting(status = 'TEMP_SAVED', isSnapshot = true, triggerType = 'MANUAL_SAVE') {
+      const st = state.currentUser.data;
+      const task = state.currentTask;
+      const contentJson = getCurrentEditorContent();
+      const activeEl = document.activeElement;
+      const lastSection = (activeEl && activeEl.getAttribute('data-section')) || '서론';
+
+      const payload = {
+        studentKey: st.studentKey || `${st.schoolName}_${st.grade}_${st.classNo}_${st.studentNo}_${st.studentName}`,
+        taskId: task.taskId,
+        schoolName: st.schoolName,
+        contentJson,
+        lastSection,
+        status,
+        totalTimeSeconds: state.totalTimeSeconds,
+        activeTypingSeconds: state.activeTypingSeconds,
+        isSnapshot: isSnapshot || status === 'SUBMITTED',
+        triggerType: status === 'SUBMITTED' ? 'FINAL_SUBMIT' : triggerType
+      };
+
+      const res = await apiCall('saveWriting', payload, status === 'SUBMITTED' ? '수행평가를 최종 제출하는 중입니다...' : '안전하게 저장하고 있습니다...');
+
+      if (res && res.success) {
+        updateStudentStatusUI(status);
+        if (state.currentWriting) {
+          state.currentWriting.status = status;
+          state.currentWriting.revisionCount = res.revisionCount || (state.currentWriting.revisionCount + 1);
+        }
+        document.getElementById('student-rev-count-badge').innerText = `버전 ${res.revisionCount || 1}회 저장됨`;
+        if (status === 'TEMP_SAVED' && triggerType === 'MANUAL_SAVE') {
+          alert('작성 중인 내용과 시간, 수정 기록이 안전하게 저장되었습니다.');
+        }
+        return true;
+      } else {
+        alert(res.message || '저장에 실패했습니다.');
+        return false;
+      }
+    }
+
+    function confirmFinalSubmit() {
+      const stats = updateTotalCharCount();
+      if (stats.total < 50) {
+        if (!confirm('작성된 글자 수가 매우 적습니다(50자 미만). 정말 제출하시겠습니까?')) return;
+      }
+      document.getElementById('confirm-modal-time').innerText = formatSeconds(state.totalTimeSeconds);
+      document.getElementById('confirm-modal-chars').innerText = `${stats.total}자`;
+      document.getElementById('modal-confirm-submit').classList.remove('hidden');
+    }
+
+    function closeConfirmModal() {
+      document.getElementById('modal-confirm-submit').classList.add('hidden');
+    }
+
+    async function executeFinalSubmit() {
+      closeConfirmModal();
+      const ok = await saveStudentWriting('SUBMITTED', true, 'FINAL_SUBMIT');
+      if (ok) {
+        alert('🎉 수행평가 과제가 성공적으로 최종 제출되었습니다!\n동료평가(상호 피드백)에 참여해 친구들의 글을 읽어보세요.');
+      }
+    }
+
+    async function openStudentRevisionModal() {
+      const st = state.currentUser.data;
+      const writingId = `${st.schoolName}_${st.grade}_${st.classNo}_${st.studentNo}_${st.studentName}_${state.currentTask.taskId}`;
+      const res = await apiCall('getRevisionHistory', { writingId }, '수정 기록 타임라인을 불러오는 중입니다...');
+
+      const container = document.getElementById('student-rev-list-container');
+      container.innerHTML = '';
+
+      if (res && res.success && res.history && res.history.length > 0) {
+        res.history.reverse().forEach(item => {
+          const card = document.createElement('div');
+          card.className = 'p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5';
+          card.innerHTML = `
+            <div class="flex items-center justify-between font-bold text-slate-800">
+              <span class="text-blue-600">버전 #${item.revisionNo} (${item.triggerType || '스냅샷'})</span>
+              <span class="text-slate-400 font-normal text-[11px]">${item.timestamp}</span>
+            </div>
+            <div class="text-[11px] text-slate-600 flex space-x-3">
+              <span>✍️ 글자수: <b>${item.charCount}자</b></span>
+              <span>⏱️ 작성 시간: <b>${formatSeconds(item.timeSpentSeconds || 0)}</b></span>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      } else {
+        container.innerHTML = '<p class="text-center text-slate-400 py-6">아직 기록된 수정 이력이 없습니다.</p>';
+      }
+      document.getElementById('modal-student-revision').classList.remove('hidden');
+    }
+
+    function closeStudentRevisionModal() {
+      document.getElementById('modal-student-revision').classList.add('hidden');
+    }
+
+    /**
+     * [신규] 학생 블라인드 동료평가 모달
+     */
+    async function openStudentPeerReviewModal() {
+      const st = state.currentUser.data;
+      const res = await apiCall('getPeerReviewTargets', {
+        schoolName: st.schoolName,
+        studentKey: st.studentKey,
+        taskId: state.currentTask.taskId
+      }, '동료 학생들의 글을 배정하고 있습니다...');
+
+      const container = document.getElementById('peer-targets-container');
+      container.innerHTML = '';
+
+      if (res && res.success && res.targets && res.targets.length > 0) {
+        state.peerReviewTargets = res.targets;
+        res.targets.forEach((target, idx) => {
+          const card = document.createElement('div');
+          card.className = 'p-4 bg-white border border-slate-200 rounded-xl space-y-3 shadow-sm';
+
+          let workText = '';
+          for (const k in target.contentJson) {
+            workText += `[${k}]\n${target.contentJson[k]}\n\n`;
+          }
+
+          card.innerHTML = `
+            <div class="flex items-center justify-between border-b pb-2">
+              <span class="font-bold text-purple-900 text-sm">📖 ${target.blindId}</span>
+              <span class="text-[11px] text-slate-400">익명 작품</span>
+            </div>
+            <div class="max-h-40 overflow-y-auto p-3 bg-slate-50 rounded-lg text-slate-700 leading-relaxed whitespace-pre-wrap text-[11px] border border-slate-200">
+              ${escapeHtml(workText)}
+            </div>
+
+            <!-- 피드백 입력 폼 -->
+            <div class="space-y-2 pt-1">
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">1. 이 글에서 가장 설득력 있거나 돋보였던 점은?</label>
+                <textarea id="peer-strength-${idx}" rows="2" placeholder="구체적인 문장이나 생각을 칭찬해 주세요..." class="w-full text-xs p-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500"></textarea>
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">2. 더 보완하면 좋을 점이나 질문하고 싶은 점은?</label>
+                <textarea id="peer-improve-${idx}" rows="2" placeholder="독자로서 궁금한 점을 정중하게 남겨주세요..." class="w-full text-xs p-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500"></textarea>
+              </div>
+              <div class="flex items-center justify-between pt-1">
+                <div class="flex items-center space-x-1">
+                  <span class="text-[11px] font-semibold text-slate-600">추천 스티커:</span>
+                  <select id="peer-sticker-${idx}" class="text-xs p-1 bg-slate-50 border border-slate-300 rounded">
+                    <option value="👍 훌륭해요">👍 훌륭해요</option>
+                    <option value="💡 참신해요">💡 참신해요</option>
+                    <option value="🎯 설득력 최고">🎯 설득력 최고</option>
+                    <option value="👏 노력 칭찬">👏 노력 칭찬</option>
+                  </select>
+                </div>
+                <button onclick="submitSinglePeerReview(${idx})" class="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold transition">
+                  피드백 제출하기
+                </button>
+              </div>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      } else {
+        container.innerHTML = '<p class="text-center text-slate-400 py-8">아직 제출을 마친 다른 동료 학생의 글이 충분하지 않습니다. 잠시 후 다시 확인해 주세요.</p>';
+      }
+
+      document.getElementById('modal-student-peer').classList.remove('hidden');
+    }
+
+    function closeStudentPeerReviewModal() {
+      document.getElementById('modal-student-peer').classList.add('hidden');
+    }
+
+    async function submitSinglePeerReview(idx) {
+      const target = state.peerReviewTargets[idx];
+      const strength = (document.getElementById(`peer-strength-${idx}`).value || '').trim();
+      const improve = (document.getElementById(`peer-improve-${idx}`).value || '').trim();
+      const sticker = document.getElementById(`peer-sticker-${idx}`).value;
+
+      if (strength.length < 10 || improve.length < 10) {
+        alert('칭찬과 보완점 모두 최소 10자 이상 정성스럽게 작성해 주세요.');
+        return;
+      }
+
+      const res = await apiCall('submitPeerReview', {
+        reviewerKey: state.currentUser.data.studentKey,
+        targetWritingId: target.writingId,
+        targetStudentKey: target.targetStudentKey,
+        taskId: state.currentTask.taskId,
+        schoolName: state.currentUser.data.schoolName,
+        strengths: strength,
+        improvements: improve,
+        sticker
+      }, '동료평가 피드백을 전달하고 있습니다...');
+
+      if (res && res.success) {
+        alert('🎉 피드백이 친구에게 안전하게 전달되었습니다!');
+        closeStudentPeerReviewModal();
+      } else {
+        alert(res.message || '등록에 실패했습니다.');
+      }
+    }
+
+    async function loadStudentReceivedReviews(writingId) {
+      const res = await apiCall('getStudentReceivedPeerReviews', { writingId });
+      const box = document.getElementById('student-received-reviews-box');
+      const list = document.getElementById('student-received-reviews-list');
+      const countEl = document.getElementById('student-received-reviews-count');
+
+      if (res && res.success && res.reviews && res.reviews.length > 0) {
+        box.classList.remove('hidden');
+        countEl.innerText = `${res.reviews.length}개`;
+        list.innerHTML = '';
+        res.reviews.forEach(r => {
+          const item = document.createElement('div');
+          item.className = 'p-2 bg-purple-50/60 rounded border border-purple-100 text-xs space-y-1';
+          item.innerHTML = `
+            <div class="flex justify-between font-bold text-purple-900">
+              <span>${r.sticker || '👍 훌륭해요'}</span>
+              <span class="text-[10px] text-slate-400">${r.timestamp || ''}</span>
+            </div>
+            <p><span class="font-bold text-slate-700">좋았던 점:</span> ${escapeHtml(r.strengths)}</p>
+            <p><span class="font-bold text-slate-700">보완할 점:</span> ${escapeHtml(r.improvements)}</p>
+          `;
+          list.appendChild(item);
+        });
+      } else {
+        box.classList.add('hidden');
+      }
+    }
+
+    /**
+     * =========================================================================
+     * AI 글쓰기 조교 패널
+     * =========================================================================
+     */
+    function sendQuickChat(prompt) {
+      document.getElementById('chat-input-text').value = prompt;
+      sendStudentChatMessage();
+    }
+
+    async function sendStudentChatMessage() {
+      const input = document.getElementById('chat-input-text');
+      const msg = (input.value || '').trim();
+      if (!msg) return;
+
+      input.value = '';
+      appendChatMessage('user', msg);
+
+      const draft = getCurrentEditorContent();
+      let summary = '';
+      for (const k in draft) {
+        if (draft[k]) summary += `[${k}]: ${draft[k].substring(0, 150)}...\n`;
+      }
+
+      const st = state.currentUser.data;
+      const res = await apiCall('askChatbot', {
+        schoolName: st.schoolName,
+        taskId: state.currentTask.taskId,
+        studentKey: st.studentKey,
+        writingId: `${st.studentKey}_${state.currentTask.taskId}`,
+        userMessage: msg,
+        currentDraftSummary: summary
+      }, 'AI 코치가 논리를 검토하고 있습니다...');
+
+      if (res && res.success) {
+        appendChatMessage('ai', res.aiResponse);
+      } else {
+        appendChatMessage('ai', '일시적인 오류로 답변을 준비하지 못했습니다.');
+      }
+    }
+
+    function appendChatMessage(sender, text) {
+      const container = document.getElementById('chat-messages-container');
+      const div = document.createElement('div');
+      const isUser = sender === 'user';
+      div.className = `flex ${isUser ? 'justify-end' : 'justify-start'}`;
+      div.innerHTML = `
+        <div class="max-w-[85%] rounded-2xl px-3.5 py-2.5 ${isUser ? 'bg-blue-600 text-white rounded-br-sm' : 'bg-slate-100 text-slate-800 rounded-bl-sm border border-slate-200'} leading-relaxed whitespace-pre-wrap">
+          ${escapeHtml(text)}
+        </div>
+      `;
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function clearChatMessages() {
+      document.getElementById('chat-messages-container').innerHTML = `
+        <div class="bg-blue-50 border border-blue-100 rounded-xl p-3 text-slate-700 leading-relaxed">
+          대화 내용이 초기화되었습니다. 무엇이든 편하게 물어보세요!
+        </div>
+      `;
+    }
+
+    /**
+     * =========================================================================
+     * 교사 관리자 대시보드
+     * =========================================================================
+     */
+    async function initTeacherDashboard(taskConfig) {
+      if (state.currentUser.data.role === 'SUPER_ADMIN') {
+        document.getElementById('admin-tab-super').classList.remove('hidden');
+      }
+
+      if (taskConfig) {
+        populateTaskSettingsForm(taskConfig);
+      }
+
+      await loadTeacherStudentData();
+    }
+
+    function switchAdminTab(tab) {
+      ['monitor', 'records', 'settings', 'roster', 'super'].forEach(t => {
+        const btn = document.getElementById(`admin-tab-${t}`);
+        const pane = document.getElementById(`admin-pane-${t}`);
+        if (btn && pane) {
+          if (t === tab) {
+            btn.className = 'py-3 px-4 text-xs font-bold border-b-2 border-blue-600 text-blue-600 whitespace-nowrap';
+            pane.classList.remove('hidden');
+          } else {
+            btn.className = 'py-3 px-4 text-xs font-medium border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap';
+            pane.classList.add('hidden');
+          }
+        }
+      });
+
+      if (tab === 'records') renderBatchRecordsPane();
+      if (tab === 'super') loadSuperAdminData();
+    }
+
+    function openBatchRecordsTabDirectly() {
+      switchAdminTab('records');
+    }
+
+    async function loadTeacherStudentData() {
+      const schoolName = state.currentUser.data.schoolName;
+      const res = await apiCall('getSchoolWritings', { schoolName }, '학생들의 수행평가 현황을 불러오는 중입니다...');
+      if (res && res.success) {
+        state.teacherStudents = res.students || [];
+        updateTeacherDashboardStats();
+        renderTeacherStudentTable();
+      }
+    }
+
+    function updateTeacherDashboardStats() {
+      const list = state.teacherStudents;
+      const total = list.length;
+      let submitted = 0;
+      let writing = 0;
+      let notStarted = 0;
+
+      list.forEach(st => {
+        if (st.status === 'SUBMITTED') submitted++;
+        else if (st.status === 'TEMP_SAVED') writing++;
+        else notStarted++;
+      });
+
+      document.getElementById('stat-teacher-total-students').innerText = `${total}명`;
+      document.getElementById('stat-teacher-submitted').innerText = `${submitted}명`;
+      document.getElementById('stat-teacher-writing').innerText = `${writing}명`;
+      document.getElementById('stat-teacher-notstarted').innerText = `${notStarted}명`;
+
+      const rate = total > 0 ? Math.round((submitted / total) * 100) : 0;
+      document.getElementById('stat-teacher-submit-rate').innerText = `제출률 ${rate}%`;
+
+      // 동료평가 상태 뱃지
+      const isPeerOn = state.currentTask ? state.currentTask.peerReviewEnabled : true;
+      document.getElementById('stat-teacher-peer-status').innerText = isPeerOn ? '활성화' : '비활성';
+      document.getElementById('stat-teacher-peer-subtext').innerText = isPeerOn ? '블라인드 상호피드백' : '동료평가 중지됨';
+    }
+
+    function renderTeacherStudentTable() {
+      const gradeFilter = document.getElementById('filter-teacher-grade').value;
+      const classFilter = document.getElementById('filter-teacher-class').value;
+      const statusFilter = document.getElementById('filter-teacher-status').value;
+      const search = (document.getElementById('search-teacher-student').value || '').trim().toLowerCase();
+
+      const tbody = document.getElementById('teacher-students-tbody');
+      tbody.innerHTML = '';
+
+      const filtered = state.teacherStudents.filter(st => {
+        if (gradeFilter !== 'ALL' && String(st.grade) !== gradeFilter) return false;
+        if (classFilter !== 'ALL' && String(st.classNo) !== classFilter) return false;
+        if (statusFilter !== 'ALL' && st.status !== statusFilter) return false;
+        if (search && !st.studentName.toLowerCase().includes(search)) return false;
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" class="text-center py-8 text-slate-400">일치하는 학생이 없습니다.</td></tr>';
+        return;
+      }
+
+      filtered.forEach(st => {
+        const wr = st.writing;
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50/80 transition';
+
+        let statusBadge = '<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-500">미시작</span>';
+        if (st.status === 'SUBMITTED') {
+          statusBadge = '<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-700">제출완료</span>';
+        } else if (st.status === 'TEMP_SAVED') {
+          statusBadge = '<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-100 text-amber-700">작성중</span>';
+        }
+
+        let charCount = 0;
+        if (wr && wr.contentJson) {
+          for (const k in wr.contentJson) {
+            if (typeof wr.contentJson[k] === 'string') charCount += wr.contentJson[k].length;
+          }
+        }
+
+        // AI 가채점 뱃지
+        let aiScoreBadge = '<span class="text-slate-400">-</span>';
+        if (wr && wr.aiEvalResult && wr.aiEvalResult.totalScore !== undefined) {
+          aiScoreBadge = `<span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">AI ${wr.aiEvalResult.totalScore}점</span>`;
+        }
+
+        const scoreText = (wr && wr.totalScore !== undefined && wr.totalScore !== '') ?
+          `<span class="font-bold text-blue-600">${wr.totalScore}점</span>` :
+          `<span class="text-slate-400 font-normal">미채점</span>`;
+
+        tr.innerHTML = `
+          <td class="px-4 py-3 font-semibold text-slate-900">
+            ${st.grade}학년 ${st.classNo}반 ${st.studentNo}번 <span class="font-bold text-blue-600">${st.studentName}</span>
+          </td>
+          <td class="px-4 py-3">${statusBadge}</td>
+          <td class="px-4 py-3 text-center font-mono">${wr ? formatSeconds(wr.totalTimeSeconds || 0) : '-'}</td>
+          <td class="px-4 py-3 text-center font-mono text-emerald-600">${wr ? formatSeconds(wr.activeTypingSeconds || 0) : '-'}</td>
+          <td class="px-4 py-3 text-center font-mono">${charCount > 0 ? charCount + '자' : '-'}</td>
+          <td class="px-4 py-3 text-center">
+            <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+              v${(wr && wr.revisionCount) || 0}
+            </span>
+          </td>
+          <td class="px-4 py-3 text-center">${aiScoreBadge}</td>
+          <td class="px-4 py-3 text-center">${scoreText}</td>
+          <td class="px-4 py-3 text-right">
+            <button onclick="openStudentEvaluationModal('${st.studentKey}')" class="px-3 py-1.5 bg-blue-50 hover:bg-blue-600 hover:text-white text-blue-700 rounded-lg text-xs font-bold transition">
+              과정 열람 및 채점
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    /**
+     * =========================================================================
+     * [신규 고도화 1] AI 1차 자동 채점 (단일 / 일괄)
+     * =========================================================================
+     */
+    async function runSingleStudentAiEvaluation() {
+      if (!state.evalCurrentStudent || !state.evalCurrentStudent.writing) {
+        alert('채점할 학생 작성 본문이 없습니다.');
+        return;
+      }
+
+      const st = state.evalCurrentStudent;
+      const wr = st.writing;
+      const task = state.currentTask || getPresetTask('persuasive');
+
+      const res = await apiCall('aiEvaluateStudent', {
+        writingId: wr.writingId,
+        schoolName: state.currentUser.data.schoolName,
+        rubricItems: task.rubricItems,
+        contentJson: wr.contentJson
+      }, 'AI가 루브릭 기준에 따라 본문을 정밀 채점 중입니다...');
+
+      if (res && res.success && res.evalResult) {
+        wr.aiEvalResult = res.evalResult;
+        showAiEvalFeedbackBanner(res.evalResult);
+        alert(`🤖 AI 1차 가채점 완료 (가채점 총점: ${res.evalResult.totalScore}점)\n하단의 [✓ 점수 폼에 일괄 적용] 버튼을 눌러 확정할 수 있습니다.`);
+      } else {
+        alert('AI 자동 채점에 실패했습니다.');
+      }
+    }
+
+    function showAiEvalFeedbackBanner(evalResult) {
+      const banner = document.getElementById('eval-ai-feedback-banner');
+      const text = document.getElementById('eval-ai-feedback-text');
+      banner.classList.remove('hidden');
+
+      let desc = `<b>종합 분석:</b> ${evalResult.overallFeedback || '양호'}<br/>`;
+      if (evalResult.comments) {
+        for (const crit in evalResult.comments) {
+          desc += `• <b>[${crit}]</b> (${evalResult.scores ? evalResult.scores[crit] : 0}점): ${evalResult.comments[crit]}<br/>`;
+        }
+      }
+      text.innerHTML = desc;
+    }
+
+    function applyAiScoresToForm() {
+      const wr = state.evalCurrentStudent && state.evalCurrentStudent.writing;
+      if (!wr || !wr.aiEvalResult || !wr.aiEvalResult.scores) return;
+
+      const scores = wr.aiEvalResult.scores;
+      document.querySelectorAll('.rubric-score-input').forEach(el => {
+        const crit = el.getAttribute('data-criterion');
+        if (scores[crit] !== undefined) {
+          el.value = scores[crit];
+        }
+      });
+      recalcTotalScore();
+
+      // 종합 의견 채우기
+      if (wr.aiEvalResult.overallFeedback && !document.getElementById('eval-teacher-feedback').value) {
+        document.getElementById('eval-teacher-feedback').value = wr.aiEvalResult.overallFeedback;
+      }
+      alert('AI 가채점 점수가 채점 폼에 적용되었습니다. 검토 후 [평가 및 피드백 저장하기]를 눌러주세요.');
+    }
+
+    async function executeBatchAiEvaluation() {
+      const submittedStudents = state.teacherStudents.filter(s => s.status === 'SUBMITTED' && s.writing);
+      if (submittedStudents.length === 0) {
+        alert('제출 완료된 학생이 없어 AI 일괄 채점을 진행할 수 없습니다.');
+        return;
+      }
+
+      if (!confirm(`제출 완료된 ${submittedStudents.length}명의 학생에 대해 AI 1차 자동 채점을 일괄 실행하시겠습니까?`)) {
+        return;
+      }
+
+      const writings = submittedStudents.map(s => ({
+        writingId: s.writing.writingId,
+        studentName: s.studentName,
+        contentJson: s.writing.contentJson
+      }));
+
+      const res = await apiCall('batchAiEvaluate', {
+        schoolName: state.currentUser.data.schoolName,
+        rubricItems: (state.currentTask && state.currentTask.rubricItems) || getPresetTask('persuasive').rubricItems,
+        writings
+      }, `${submittedStudents.length}명의 학생 글을 AI가 일괄 분석 및 채점 중입니다...`);
+
+      if (res && res.success) {
+        alert(res.message || 'AI 1차 일괄 채점이 완료되었습니다!');
+        await loadTeacherStudentData();
+      } else {
+        alert(res.message || '일괄 채점에 실패했습니다.');
+      }
+    }
+
+    /**
+     * =========================================================================
+     * [신규 고도화 2] 생기부 과세특 초안 생성 및 일괄 관리
+     * =========================================================================
+     */
+    async function generateSingleStudentRecord() {
+      if (!state.evalCurrentStudent || !state.evalCurrentStudent.writing) {
+        alert('작성 본문이 없습니다.');
+        return;
+      }
+
+      const st = state.evalCurrentStudent;
+      const res = await apiCall('generateStudentRecord', {
+        writingId: st.writing.writingId,
+        schoolName: state.currentUser.data.schoolName,
+        studentInfo: { grade: st.grade, classNo: st.classNo, studentName: st.studentName },
+        writing: st.writing,
+        taskTitle: (state.currentTask && state.currentTask.taskTitle) || '수행평가'
+      }, '학생의 과정 데이터를 바탕으로 생기부 과세특 문안을 작성 중입니다...');
+
+      if (res && res.success && res.recordDraft) {
+        st.writing.studentRecordDraft = res.recordDraft;
+        const textarea = document.getElementById('eval-student-record-draft');
+        textarea.value = res.recordDraft;
+        updateRecordCharCount();
+        alert('📝 생활기록부 과세특 초안 생성이 완료되었습니다!');
+      } else {
+        alert('생기부 초안 생성에 실패했습니다.');
+      }
+    }
+
+    function updateRecordCharCount() {
+      const val = document.getElementById('eval-student-record-draft').value || '';
+      document.getElementById('eval-record-char-count').innerText = `${val.length}자 (권장 300~500자)`;
+    }
+
+    function copyStudentRecordToClipboard() {
+      const text = document.getElementById('eval-student-record-draft').value;
+      if (!text) {
+        alert('복사할 문안이 없습니다.');
+        return;
+      }
+      navigator.clipboard.writeText(text).then(() => {
+        alert('📋 생기부 과세특 문안이 클립보드에 복사되었습니다. 나이스(NEIS)에 붙여넣기 하세요!');
+      });
+    }
+
+    async function saveStudentRecordDraftSubmit() {
+      const st = state.evalCurrentStudent;
+      if (!st || !st.writing) return;
+      const draft = document.getElementById('eval-student-record-draft').value.trim();
+
+      const res = await apiCall('saveStudentRecordDraft', {
+        writingId: st.writing.writingId,
+        recordDraft: draft
+      }, '과세특 문안을 저장하는 중입니다...');
+
+      if (res && res.success) {
+        st.writing.studentRecordDraft = draft;
+        alert('과세특 초안이 저장되었습니다.');
+      }
+    }
+
+    // [탭 2] 생기부 과세특 일괄 렌더링
+    function renderBatchRecordsPane() {
+      const container = document.getElementById('batch-records-container');
+      container.innerHTML = '';
+
+      const submitted = state.teacherStudents.filter(s => s.status === 'SUBMITTED' && s.writing);
+
+      if (submitted.length === 0) {
+        container.innerHTML = '<div class="p-8 bg-slate-50 border border-slate-200 rounded-xl text-center text-slate-400">아직 제출을 완료한 학생이 없습니다.</div>';
+        return;
+      }
+
+      submitted.forEach(st => {
+        const wr = st.writing;
+        const draftText = wr.studentRecordDraft || generateFallbackStudentRecordDraft(st, wr, state.currentTask?.taskTitle || '수행평가');
+        wr.studentRecordDraft = draftText; // 기본 채움
+
+        const card = document.createElement('div');
+        card.className = 'p-4 bg-white border border-slate-200 rounded-xl shadow-sm space-y-2';
+        card.innerHTML = `
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b pb-2">
+            <div class="flex items-center space-x-2">
+              <span class="font-bold text-slate-900">${st.grade}학년 ${st.classNo}반 ${st.studentNo}번 ${st.studentName}</span>
+              <span class="text-xs text-slate-400">작성시간: ${Math.round((wr.totalTimeSeconds || 0)/60)}분 · 수정 ${wr.revisionCount || 1}회</span>
+            </div>
+            <button onclick="copySingleStudentBatchRecord('${st.studentKey}')" class="px-2.5 py-1 text-xs bg-purple-50 text-purple-700 hover:bg-purple-100 rounded-md font-semibold border border-purple-200 transition">
+              📋 문안 복사
+            </button>
+          </div>
+          <textarea id="batch-record-text-${st.studentKey}" rows="3" class="w-full text-xs p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none leading-relaxed text-slate-800">${escapeHtml(draftText)}</textarea>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function copySingleStudentBatchRecord(studentKey) {
+      const textarea = document.getElementById(`batch-record-text-${studentKey}`);
+      if (!textarea) return;
+      navigator.clipboard.writeText(textarea.value).then(() => {
+        alert('학생 과세특 문안이 복사되었습니다.');
+      });
+    }
+
+    async function executeBatchStudentRecordGeneration() {
+      const submitted = state.teacherStudents.filter(s => s.status === 'SUBMITTED' && s.writing);
+      if (submitted.length === 0) {
+        alert('생성할 대상 학생이 없습니다.');
+        return;
+      }
+
+      const list = submitted.map(s => ({
+        writingId: s.writing.writingId,
+        studentInfo: { grade: s.grade, classNo: s.classNo, studentName: s.studentName },
+        writing: s.writing
+      }));
+
+      const res = await apiCall('batchGenerateStudentRecords', {
+        schoolName: state.currentUser.data.schoolName,
+        taskTitle: (state.currentTask && state.currentTask.taskTitle) || '글쓰기 수행평가',
+        studentWritingList: list
+      }, `${submitted.length}명의 학생 생활기록부 과세특 문안을 일괄 생성 중입니다...`);
+
+      if (res && res.success) {
+        alert(res.message || '생기부 과세특 일괄 생성이 완료되었습니다!');
+        if (res.results) {
+          res.results.forEach(r => {
+            const st = state.teacherStudents.find(s => s.writing && s.writing.writingId === r.writingId);
+            if (st && st.writing) st.writing.studentRecordDraft = r.recordDraft;
+          });
+        }
+        renderBatchRecordsPane();
+      } else {
+        alert('일괄 생성에 실패했습니다.');
+      }
+    }
+
+    function exportStudentRecordsToCSV() {
+      const submitted = state.teacherStudents.filter(s => s.status === 'SUBMITTED' && s.writing);
+      if (submitted.length === 0) {
+        alert('내보낼 데이터가 없습니다.');
+        return;
+      }
+
+      const headers = ['학년', '반', '번호', '성명', '과목별세부능력및특기사항'];
+      let csv = '\uFEFF' + headers.join(',') + '\n';
+
+      submitted.forEach(st => {
+        const textarea = document.getElementById(`batch-record-text-${st.studentKey}`);
+        const record = textarea ? textarea.value : (st.writing.studentRecordDraft || '');
+        const clean = record.replace(/"/g, '""');
+        csv += `${st.grade},${st.classNo},${st.studentNo},"${st.studentName}","${clean}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `나이스_과세특_${state.currentUser.data.schoolName}_${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    /**
+     * =========================================================================
+     * [신규 고도화 3] 동료평가 활성화 토글
+     * =========================================================================
+     */
+    function handlePeerToggleChange() {
+      const isChecked = document.getElementById('setting-peer-toggle').checked;
+      const detailBox = document.getElementById('setting-peer-detail-box');
+      if (isChecked) {
+        detailBox.classList.remove('hidden');
+      } else {
+        detailBox.classList.add('hidden');
+      }
+    }
+
+    /**
+     * =========================================================================
+     * 학생 평가 모달 열기 & Replay 타임라인
+     * =========================================================================
+     */
+    async function openStudentEvaluationModal(studentKey) {
+      const student = state.teacherStudents.find(s => s.studentKey === studentKey);
+      if (!student) return;
+
+      state.evalCurrentStudent = student;
+      const wr = student.writing;
+
+      document.getElementById('eval-modal-student-name').innerText = `${student.studentName} (${student.grade}학년 ${student.classNo}반 ${student.studentNo}번)`;
+      document.getElementById('eval-modal-task-title').innerText = (state.currentTask && state.currentTask.taskTitle) || '수행평가 과제';
+
+      const badge = document.getElementById('eval-modal-status-badge');
+      if (student.status === 'SUBMITTED') {
+        badge.className = 'px-2 py-0.5 text-xs font-semibold rounded-full bg-emerald-500/20 text-emerald-300';
+        badge.innerText = '최종제출 완료';
+      } else if (student.status === 'TEMP_SAVED') {
+        badge.className = 'px-2 py-0.5 text-xs font-semibold rounded-full bg-amber-500/20 text-amber-300';
+        badge.innerText = '작성중';
+      } else {
+        badge.className = 'px-2 py-0.5 text-xs font-semibold rounded-full bg-slate-500/20 text-slate-300';
+        badge.innerText = '미시작';
+      }
+
+      document.getElementById('eval-time-total').innerText = formatSeconds((wr && wr.totalTimeSeconds) || 0);
+      document.getElementById('eval-time-active').innerText = formatSeconds((wr && wr.activeTypingSeconds) || 0);
+      document.getElementById('eval-rev-count').innerText = `${(wr && wr.revisionCount) || 0}개 스냅샷`;
+      document.getElementById('eval-chat-count').innerText = `${student.chatCount || 0}건`;
+
+      await loadEvalTimeline(wr ? wr.writingId : null);
+      renderEvalWorkSections((wr && wr.contentJson) || {});
+      renderEvalRubricForm(wr);
+
+      // AI 가채점 피드백 배너
+      if (wr && wr.aiEvalResult) {
+        showAiEvalFeedbackBanner(wr.aiEvalResult);
+      } else {
+        document.getElementById('eval-ai-feedback-banner').classList.add('hidden');
+      }
+
+      // 생기부 초안 복원
+      const draftVal = (wr && wr.studentRecordDraft) || generateFallbackStudentRecordDraft(student, wr || {}, state.currentTask?.taskTitle || '수행평가');
+      document.getElementById('eval-student-record-draft').value = draftVal;
+      document.getElementById('eval-student-record-draft').oninput = updateRecordCharCount;
+      updateRecordCharCount();
+
+      // AI 질의 및 동료평가 로그 로드
+      loadEvalChatLogs(wr ? wr.writingId : null);
+      loadEvalPeerReviews(wr ? wr.writingId : null);
+
+      document.getElementById('modal-eval').classList.remove('hidden');
+    }
+
+    function closeEvalModal() {
+      document.getElementById('modal-eval').classList.add('hidden');
+    }
+
+    async function loadEvalTimeline(writingId) {
+      const slider = document.getElementById('eval-timeline-slider');
+      const stepLabel = document.getElementById('eval-timeline-rev-step');
+      const timelineLabel = document.getElementById('eval-timeline-label');
+
+      state.evalTimelineRevisions = [];
+
+      if (!writingId) {
+        slider.max = 0;
+        slider.value = 0;
+        stepLabel.innerText = '버전 0 / 0';
+        timelineLabel.innerText = '작성 데이터 없음';
+        return;
+      }
+
+      const res = await apiCall('getRevisionHistory', { writingId }, '수정 로그 타임라인을 구성하는 중입니다...');
+      if (res && res.success && res.history && res.history.length > 0) {
+        state.evalTimelineRevisions = res.history;
+        slider.max = res.history.length - 1;
+        slider.value = res.history.length - 1;
+        stepLabel.innerText = `버전 ${res.history.length} / ${res.history.length}`;
+        timelineLabel.innerText = '최종본 (현재)';
+        updateSnapshotInfoCard(res.history[res.history.length - 1]);
+      } else {
+        slider.max = 0;
+        slider.value = 0;
+        stepLabel.innerText = '기록 없음';
+        timelineLabel.innerText = '현재 상태';
+      }
+    }
+
+    function handleTimelineSliderChange(val) {
+      const idx = parseInt(val, 10);
+      const revs = state.evalTimelineRevisions;
+      if (!revs || revs.length === 0) return;
+
+      const rev = revs[idx];
+      const isLatest = idx === revs.length - 1;
+      document.getElementById('eval-timeline-rev-step').innerText = `버전 ${idx + 1} / ${revs.length}`;
+      document.getElementById('eval-timeline-label').innerText = isLatest ? '최종본 (현재)' : `과거 버전 #${rev.revisionNo} (${rev.triggerType || '수정본'})`;
+      updateSnapshotInfoCard(rev);
+      renderEvalWorkSections(rev.contentSnapshot || {});
+    }
+
+    function updateSnapshotInfoCard(rev) {
+      const box = document.getElementById('eval-snapshot-info');
+      box.innerHTML = `
+        <span>🕒 기록 시각: <b>${rev.timestamp || '-'}</b></span>
+        <span>✍️ 글자수: <b>${rev.charCount || 0}자</b></span>
+        <span>⏱️ 소요 시간: <b>${formatSeconds(rev.timeSpentSeconds || 0)}</b></span>
+        <span>🏷️ 구분: <b>${rev.triggerType || '스냅샷'}</b></span>
+      `;
+    }
+
+    function renderEvalWorkSections(contentJson) {
+      const container = document.getElementById('eval-work-sections');
+      container.innerHTML = '';
+      if (!contentJson || Object.keys(contentJson).length === 0) {
+        container.innerHTML = '<div class="p-6 bg-slate-50 border border-slate-200 rounded-xl text-center text-slate-400">작성된 글이 없습니다.</div>';
+        return;
+      }
+      for (const secName in contentJson) {
+        const text = contentJson[secName] || '';
+        const card = document.createElement('div');
+        card.className = 'p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5';
+        card.innerHTML = `
+          <div class="flex items-center justify-between font-bold text-xs text-slate-700">
+            <span>[${secName}]</span>
+            <span class="text-slate-400 font-mono text-[11px]">${text.length}자</span>
+          </div>
+          <div class="p-3 bg-white rounded-lg border border-slate-200 text-xs text-slate-800 leading-relaxed whitespace-pre-wrap">${escapeHtml(text) || '<span class="text-slate-400 italic">내용 없음</span>'}</div>
+        `;
+        container.appendChild(card);
+      }
+    }
+
+    function renderEvalRubricForm(writing) {
+      const container = document.getElementById('eval-rubric-form-container');
+      container.innerHTML = '';
+
+      const task = state.currentTask || getPresetTask('persuasive');
+      const rubrics = task.rubricItems || getPresetTask('persuasive').rubricItems;
+      const savedScores = (writing && writing.scoreJson) || {};
+      let totalMax = 0;
+
+      rubrics.forEach(r => {
+        totalMax += r.maxScore;
+        const currentVal = savedScores[r.criterion] !== undefined ? savedScores[r.criterion] : '';
+        const row = document.createElement('div');
+        row.className = 'flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2.5 bg-white rounded-lg border border-blue-100 text-xs';
+        row.innerHTML = `
+          <div class="flex-1">
+            <span class="font-bold text-slate-800">${r.criterion}</span>
+            <span class="text-slate-400 text-[11px] ml-1">(${r.desc})</span>
+          </div>
+          <div class="flex items-center space-x-1.5">
+            <input type="number" min="0" max="${r.maxScore}" value="${currentVal}" data-criterion="${r.criterion}" data-max="${r.maxScore}" oninput="recalcTotalScore()" class="w-16 px-2 py-1 text-center font-bold text-blue-600 bg-slate-50 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 rubric-score-input" placeholder="0">
+            <span class="text-slate-400 font-medium">/ ${r.maxScore}점</span>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+
+      document.getElementById('eval-max-score-display').innerText = totalMax;
+      document.getElementById('eval-teacher-feedback').value = (writing && writing.teacherFeedback) || '';
+      recalcTotalScore();
+    }
+
+    function recalcTotalScore() {
+      let sum = 0;
+      document.querySelectorAll('.rubric-score-input').forEach(el => {
+        const val = parseInt(el.value, 10);
+        if (!isNaN(val)) sum += val;
+      });
+      document.getElementById('eval-total-score-display').innerText = sum;
+    }
+
+    async function saveTeacherEvaluationSubmit() {
+      if (!state.evalCurrentStudent) return;
+      const st = state.evalCurrentStudent;
+      const wr = st.writing;
+      if (!wr) {
+        alert('학생의 작성 데이터가 존재하지 않습니다.');
+        return;
+      }
+
+      const scoreJson = {};
+      let sum = 0;
+      document.querySelectorAll('.rubric-score-input').forEach(el => {
+        const crit = el.getAttribute('data-criterion');
+        const val = parseInt(el.value, 10) || 0;
+        scoreJson[crit] = val;
+        sum += val;
+      });
+
+      const feedback = document.getElementById('eval-teacher-feedback').value;
+
+      const res = await apiCall('saveTeacherEvaluation', {
+        writingId: wr.writingId,
+        scoreJson,
+        totalScore: sum,
+        teacherFeedback: feedback
+      }, '평가 및 피드백을 저장하고 있습니다...');
+
+      if (res && res.success) {
+        alert('수행평가 채점 및 피드백이 성공적으로 저장되었습니다!');
+        wr.scoreJson = scoreJson;
+        wr.totalScore = sum;
+        wr.teacherFeedback = feedback;
+        renderTeacherStudentTable();
+      } else {
+        alert(res.message || '평가 저장에 실패했습니다.');
+      }
+    }
+
+    function loadEvalChatLogs(writingId) {
+      const container = document.getElementById('eval-chat-logs-container');
+      container.innerHTML = '';
+      const logs = getMockChatLogsForWriting(writingId);
+      document.getElementById('eval-chat-count-label').innerText = logs.length;
+
+      if (logs.length === 0) {
+        container.innerHTML = '<p class="text-slate-400 italic">대화 내역이 없습니다.</p>';
+        return;
+      }
+
+      logs.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'p-2.5 bg-white rounded-lg border border-slate-200 space-y-1';
+        div.innerHTML = `
+          <div class="flex justify-between text-[10px] text-slate-400"><span>질문</span><span>${item.timestamp}</span></div>
+          <p class="font-semibold text-slate-900">Q. ${escapeHtml(item.userMessage)}</p>
+          <p class="text-slate-700 whitespace-pre-wrap"><span class="font-bold text-blue-600">A:</span> ${escapeHtml(item.aiResponse)}</p>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function loadEvalPeerReviews(writingId) {
+      const container = document.getElementById('eval-peer-reviews-container');
+      container.innerHTML = '';
+      const reviews = getMockPeerReviewsForWriting(writingId);
+      document.getElementById('eval-peer-count-label').innerText = reviews.length;
+
+      if (reviews.length === 0) {
+        container.innerHTML = '<p class="text-slate-400 italic">아직 등록된 동료평가 피드백이 없습니다.</p>';
+        return;
+      }
+
+      reviews.forEach(r => {
+        const div = document.createElement('div');
+        div.className = 'p-2.5 bg-white rounded-lg border border-purple-200 space-y-1';
+        div.innerHTML = `
+          <div class="flex justify-between text-[10px] text-purple-700 font-bold"><span>${r.sticker || '👍 훌륭해요'}</span><span>${r.timestamp || ''}</span></div>
+          <p><b class="text-slate-700">좋았던 점:</b> ${escapeHtml(r.strengths)}</p>
+          <p><b class="text-slate-700">보완점:</b> ${escapeHtml(r.improvements)}</p>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function printStudentWork() {
+      const st = state.evalCurrentStudent;
+      const wr = st.writing;
+      if (!st || !wr) return;
+
+      document.getElementById('print-school').innerText = st.schoolName || state.currentUser.data.schoolName;
+      document.getElementById('print-student').innerText = `${st.grade}학년 ${st.classNo}반 ${st.studentNo}번 ${st.studentName}`;
+      document.getElementById('print-task').innerText = (state.currentTask && state.currentTask.taskTitle) || '수행평가 과제';
+      document.getElementById('print-submitted-at').innerText = wr.submittedAt || wr.updatedAt || '제출 일시 없음';
+      document.getElementById('print-total-time').innerText = formatSeconds(wr.totalTimeSeconds || 0);
+      document.getElementById('print-rev-count').innerText = `${wr.revisionCount || 0}회`;
+
+      const contentBox = document.getElementById('print-content');
+      contentBox.innerHTML = '';
+      const content = wr.contentJson || {};
+      for (const sec in content) {
+        const secDiv = document.createElement('div');
+        secDiv.className = 'space-y-1';
+        secDiv.innerHTML = `
+          <h4 class="font-bold text-slate-900 border-b border-slate-300 pb-1">■ ${sec}</h4>
+          <p class="leading-relaxed text-slate-800 whitespace-pre-wrap pl-2">${escapeHtml(content[sec]) || '(내용 없음)'}</p>
+        `;
+        contentBox.appendChild(secDiv);
+      }
+
+      document.getElementById('print-score').innerText = (wr.totalScore !== undefined && wr.totalScore !== '') ? `${wr.totalScore}점` : '미채점';
+      document.getElementById('print-feedback').innerText = wr.teacherFeedback || '작성된 총평이 없습니다.';
+      document.getElementById('print-record').innerText = wr.studentRecordDraft || generateFallbackStudentRecordDraft(st, wr, state.currentTask?.taskTitle || '수행평가');
+
+      window.print();
+    }
+
+    /**
+     * =========================================================================
+     * CSV 다운로드 및 과제 설정 저장
+     * =========================================================================
+     */
+    function downloadStudentCsvTemplate() {
+      const header = '학년,반,번호,이름\n';
+      const sample = '1,1,1,김하늘\n1,1,2,이바다\n1,2,15,홍길동\n';
+      const csvContent = '\uFEFF' + header + sample;
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = '학생명렬표_양식.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function exportAllWritingsToCSV() {
+      const list = state.teacherStudents;
+      if (!list || list.length === 0) return;
+
+      const headers = ['학년', '반', '번호', '이름', '제출상태', '총작성시간(초)', '활성타자시간(초)', '글자수', '수정버전수', 'AI가채점점수', '최종점수', '교사총평', '과세특문안', '글본문'];
+      let csv = '\uFEFF' + headers.join(',') + '\n';
+
+      list.forEach(st => {
+        const wr = st.writing;
+        let charCount = 0;
+        let fullText = '';
+        if (wr && wr.contentJson) {
+          for (const k in wr.contentJson) {
+            fullText += `[${k}] ${wr.contentJson[k]} `;
+            if (typeof wr.contentJson[k] === 'string') charCount += wr.contentJson[k].length;
+          }
+        }
+        const cleanFull = fullText.replace(/"/g, '""');
+        const cleanFeed = (wr && wr.teacherFeedback ? wr.teacherFeedback : '').replace(/"/g, '""');
+        const cleanRec = (wr && wr.studentRecordDraft ? wr.studentRecordDraft : '').replace(/"/g, '""');
+
+        const row = [
+          st.grade, st.classNo, st.studentNo,
+          `"${st.studentName}"`, `"${st.status}"`,
+          wr ? wr.totalTimeSeconds || 0 : 0,
+          wr ? wr.activeTypingSeconds || 0 : 0,
+          charCount,
+          wr ? wr.revisionCount || 0 : 0,
+          wr && wr.aiEvalResult ? wr.aiEvalResult.totalScore : '',
+          wr && wr.totalScore !== undefined ? wr.totalScore : '',
+          `"${cleanFeed}"`,
+          `"${cleanRec}"`,
+          `"${cleanFull}"`
+        ];
+        csv += row.join(',') + '\n';
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `수행평가_전체결과_${state.currentUser.data.schoolName}_${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    let pendingRoster = [];
+    function handleRosterFileSelect(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const text = e.target.result;
+        const lines = text.split(/\r\n|\n/).filter(l => l.trim() !== '');
+        if (lines.length < 2) return;
+
+        pendingRoster = [];
+        const tbody = document.getElementById('roster-preview-tbody');
+        tbody.innerHTML = '';
+
+        for (let i = 1; i < lines.length; i++) {
+          const parts = lines[i].split(',').map(s => s.trim().replace(/^"|"$/g, ''));
+          if (parts.length >= 4) {
+            const item = {
+              grade: parseInt(parts[0], 10),
+              classNo: parseInt(parts[1], 10),
+              studentNo: parseInt(parts[2], 10),
+              studentName: parts[3]
+            };
+            if (item.grade && item.classNo && item.studentNo && item.studentName) {
+              pendingRoster.push(item);
+              const tr = document.createElement('tr');
+              tr.className = 'border-b';
+              tr.innerHTML = `<td>${item.grade}</td><td>${item.classNo}</td><td>${item.studentNo}</td><td>${escapeHtml(item.studentName)}</td>`;
+              tbody.appendChild(tr);
+            }
+          }
+        }
+        document.getElementById('roster-preview-count').innerText = pendingRoster.length;
+        document.getElementById('roster-preview-area').classList.remove('hidden');
+      };
+      reader.readAsText(file, 'UTF-8');
+    }
+
+    async function submitRosterUpload() {
+      if (pendingRoster.length === 0) return;
+      const res = await apiCall('uploadStudentRoster', {
+        schoolName: state.currentUser.data.schoolName,
+        roster: pendingRoster
+      }, '학생 명렬을 등록하고 있습니다...');
+
+      if (res && res.success) {
+        alert(res.message || '학생 명렬 등록이 완료되었습니다!');
+        document.getElementById('roster-preview-area').classList.add('hidden');
+        document.getElementById('input-roster-csv').value = '';
+        await loadTeacherStudentData();
+      }
+    }
+
+    function getPresetTask(presetType) {
+      if (presetType === 'persuasive') {
+        return {
+          taskTitle: '중학교 1학년 설득하는 글쓰기 (디지털 기기 학교 내 사용 제한)',
+          writingStructure: ['제목', '서론(문제상황과 주장)', '본론1(주장과 핵심근거)', '본론2(예상반론과 재반박)', '결론(요약 및 당부)'],
+          checklistItems: [
+            '자신의 주장과 핵심 논거가 명확하게 드러났는가?',
+            '상대방의 반론을 예상하고 합리적으로 재반박했는가?',
+            'AI가 제시한 정보의 사실 여부를 검색으로 교차 검증했는가?',
+            '상대방을 존중하는 정중한 어조를 유지했는가?'
+          ],
+          rubricItems: [
+            { criterion: '주장의 타당성 및 논거 신뢰성', maxScore: 30, desc: '주장이 뚜렷하고 객관적 근거가 풍부한가' },
+            { criterion: '반박 및 보완의 논리성', maxScore: 30, desc: '반대 입장을 충분히 고려하여 합리적으로 재반박했는가' },
+            { criterion: '구조의 완결성 및 어조', maxScore: 20, desc: '서론-본론-결론의 유기적 구성과 설득적 어조' },
+            { criterion: 'AI 활용 및 과정 성실성', maxScore: 20, desc: 'AI 대필 없이 비판적 질문을 통해 능동적으로 수정했는가' }
+          ],
+          systemPrompt: '당신은 중학교 국어 글쓰기 지도교사입니다. 학생에게 절대 대신 글을 써주지 말고, 질문을 던져 스스로 사고하도록 코칭하세요.',
+          deadline: '2026-12-31 23:59',
+          peerReviewEnabled: true,
+          peerReviewConfig: { minChars: 20 }
+        };
+      } else if (presetType === 'report') {
+        return {
+          taskTitle: '고등학교 융합 탐구 보고서 (기후변화와 신재생에너지)',
+          writingStructure: ['연구 제목', '1. 탐구 동기 및 목적', '2. 선행 연구 및 이론적 배경', '3. 탐구 방법 및 분석', '4. 결과 및 시사점', '5. 참고 문헌'],
+          checklistItems: ['연구 문제가 구체적인가?', '데이터 분석이 객관적인가?'],
+          rubricItems: [
+            { criterion: '연구 문제의 타당성', maxScore: 30, desc: '문제의 심도' },
+            { criterion: '데이터 분석 엄밀성', maxScore: 40, desc: '논리적 분석' },
+            { criterion: '윤리적 인용', maxScore: 30, desc: '출처 표기' }
+          ],
+          systemPrompt: '고등학교 탐구 보고서 지도교사로서 방법론의 과학적 타당성을 검토하는 질문을 던져주세요.',
+          deadline: '2026-12-31 23:59',
+          peerReviewEnabled: true,
+          peerReviewConfig: { minChars: 20 }
+        };
+      } else if (presetType === 'critique') {
+        return {
+          taskTitle: '문학 비평문 (디스토피아 소설과 현대 사회의 인간성)',
+          writingStructure: ['비평문 제목', '서론(작품 소개 및 테제)', '본론1(작품 속 상징 분석)', '본론2(현대 사회와 비판)', '결론(문학적 가치)'],
+          checklistItems: ['심층적 주제를 포착했는가?'],
+          rubricItems: [
+            { criterion: '해석의 독창성', maxScore: 35, desc: '독창적 시각' },
+            { criterion: '비평 논거', maxScore: 35, desc: '구체적 인용' },
+            { criterion: '문장력', maxScore: 30, desc: '매끄러운 전개' }
+          ],
+          systemPrompt: '문학 비평 지도 조교로서 심층적 해석을 유도하세요.',
+          deadline: '2026-12-31 23:59',
+          peerReviewEnabled: true,
+          peerReviewConfig: { minChars: 20 }
+        };
+      } else {
+        return {
+          taskTitle: 'AI 윤리 쟁점 에세이 (인공지능 창작물의 저작권 인정 여부)',
+          writingStructure: ['에세이 제목', '도입(AI 창작물과 쟁점)', '주장1(철학·법적 분석)', '주장2(파급효과)', '종합 및 제언'],
+          checklistItems: ['찬반 양측을 균형 있게 다루었는가?'],
+          rubricItems: [
+            { criterion: '입체적 분석', maxScore: 40, desc: '다각적 조망' },
+            { criterion: '논리적 완결성', maxScore: 40, desc: '주장의 설득력' },
+            { criterion: '윤리적 태도', maxScore: 20, desc: '표현의 적절성' }
+          ],
+          systemPrompt: '윤리학 교수로서 소크라테스식 문답으로 반문하세요.',
+          deadline: '2026-12-31 23:59',
+          peerReviewEnabled: true,
+          peerReviewConfig: { minChars: 20 }
+        };
+      }
+    }
+
+    function loadAssignmentPreset(presetType) {
+      const p = getPresetTask(presetType);
+      populateTaskSettingsForm(p);
+      alert(`'${p.taskTitle}' 템플릿이 입력되었습니다. 하단 [저장하기]를 누르세요.`);
+    }
+
+    function populateTaskSettingsForm(task) {
+      document.getElementById('setting-task-title').value = task.taskTitle || '';
+      document.getElementById('setting-deadline').value = task.deadline || '2026-12-31 23:59';
+      document.getElementById('setting-writing-structure').value = (task.writingStructure || []).join(', ');
+      document.getElementById('setting-checklist').value = (task.checklistItems || []).join('\n');
+      document.getElementById('setting-rubric-json').value = JSON.stringify(task.rubricItems || [], null, 2);
+      document.getElementById('setting-system-prompt').value = task.systemPrompt || '';
+
+      const isPeerOn = task.peerReviewEnabled !== false;
+      document.getElementById('setting-peer-toggle').checked = isPeerOn;
+      handlePeerToggleChange();
+    }
+
+    async function saveAdminSettingsSubmit() {
+      const taskTitle = document.getElementById('setting-task-title').value.trim();
+      const deadline = document.getElementById('setting-deadline').value.trim();
+      const structStr = document.getElementById('setting-writing-structure').value.trim();
+      const checkStr = document.getElementById('setting-checklist').value.trim();
+      const rubricStr = document.getElementById('setting-rubric-json').value.trim();
+      const systemPrompt = document.getElementById('setting-system-prompt').value.trim();
+      const apiProvider = document.getElementById('setting-api-provider').value;
+      const apiKey = document.getElementById('setting-api-key').value.trim();
+      const peerReviewEnabled = document.getElementById('setting-peer-toggle').checked;
+      const peerMinChars = parseInt(document.getElementById('setting-peer-min-chars').value, 10) || 20;
+
+      let writingStructure = structStr.split(',').map(s => s.trim()).filter(Boolean);
+      if (writingStructure.length === 0) writingStructure = ['제목', '서론', '본론', '결론'];
+
+      const checklistItems = checkStr.split('\n').map(s => s.trim()).filter(Boolean);
+
+      let rubricItems = [];
+      try { rubricItems = JSON.parse(rubricStr); } catch (e) {
+        alert('루브릭 JSON 형식이 올바르지 않습니다.');
+        return;
+      }
+
+      const payload = {
+        adminId: state.currentUser.data.adminId,
+        schoolName: state.currentUser.data.schoolName,
+        taskTitle,
+        deadline,
+        writingStructure,
+        checklistItems,
+        rubricItems,
+        systemPrompt,
+        apiProvider,
+        apiKey,
+        peerReviewEnabled,
+        peerReviewConfig: { minChars: peerMinChars }
+      };
+
+      const res = await apiCall('saveAdminSettings', payload, '과제 및 동료평가 설정을 저장하고 있습니다...');
+      if (res && res.success) {
+        alert('수행평가 과제 및 동료평가 설정이 저장되었습니다!');
+        state.currentTask = {
+          taskId: res.taskId || 'TASK_NEW',
+          taskTitle,
+          deadline,
+          writingStructure,
+          checklistItems,
+          rubricItems,
+          systemPrompt,
+          peerReviewEnabled,
+          peerReviewConfig: { minChars: peerMinChars }
+        };
+        updateTeacherDashboardStats();
+      }
+    }
+
+    async function loadSuperAdminData() {
+      const res = await apiCall('getSuperAdminData', {}, '전체 학교 목록을 불러오는 중입니다...');
+      const tbody = document.getElementById('super-admin-tbody');
+      tbody.innerHTML = '';
+
+      if (res && res.success && res.adminList) {
+        res.adminList.forEach(a => {
+          const tr = document.createElement('tr');
+          tr.className = 'border-b';
+          const isApproved = a.status === 'APPROVED';
+          tr.innerHTML = `
+            <td class="px-4 py-2.5 font-bold">${a.adminId}</td>
+            <td class="px-4 py-2.5">${a.teacherName}</td>
+            <td class="px-4 py-2.5">${a.schoolName}</td>
+            <td class="px-4 py-2.5"><span class="px-2 py-0.5 rounded text-[11px] ${a.role === 'SUPER_ADMIN' ? 'bg-purple-100 text-purple-700 font-bold' : 'bg-slate-100 text-slate-700'}">${a.role}</span></td>
+            <td class="px-4 py-2.5"><span class="px-2 py-0.5 rounded text-[11px] font-semibold ${isApproved ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">${a.status}</span></td>
+            <td class="px-4 py-2.5 text-slate-400">${a.createdAt || '-'}</td>
+            <td class="px-4 py-2.5 text-right">
+              ${!isApproved ? `<button onclick="approveAdminUser('${a.adminId}')" class="px-2.5 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-[11px] font-bold">승인하기</button>` : '<span class="text-emerald-600 text-xs font-bold">✓ 승인됨</span>'}
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+    }
+
+    async function approveAdminUser(targetAdminId) {
+      const res = await apiCall('approveAdmin', { targetAdminId });
+      if (res && res.success) {
+        alert(res.message);
+        loadSuperAdminData();
+      }
+    }
+
+    function openSignupModal() { document.getElementById('modal-signup').classList.remove('hidden'); }
+    function closeSignupModal() { document.getElementById('modal-signup').classList.add('hidden'); }
+
+    async function handleAdminSignupSubmit() {
+      const schoolName = document.getElementById('signup-school-name').value.trim();
+      const teacherName = document.getElementById('signup-teacher-name').value.trim();
+      const adminId = document.getElementById('signup-admin-id').value.trim();
+      const password = document.getElementById('signup-password').value.trim();
+      const superCode = document.getElementById('signup-super-code').value.trim();
+
+      if (!schoolName || !teacherName || !adminId || !password) {
+        alert('필수 정보를 입력하세요.');
+        return;
+      }
+
+      const res = await apiCall('adminSignup', { schoolName, teacherName, adminId, password, superCode });
+      if (res && res.success) {
+        alert(res.message || '가입이 완료되었습니다!');
+        closeSignupModal();
+        switchLoginTab('teacher');
+        document.getElementById('login-admin-id').value = adminId;
+        document.getElementById('login-admin-pw').value = password;
+      }
+    }
+
+    function openServerConfigModal() {
+      document.getElementById('input-server-url').value = state.serverUrl;
+      document.getElementById('modal-server-config').classList.remove('hidden');
+    }
+    function closeServerConfigModal() { document.getElementById('modal-server-config').classList.add('hidden'); }
+
+    function saveServerUrlConfig() {
+      const url = document.getElementById('input-server-url').value.trim();
+      state.serverUrl = url;
+      localStorage.setItem(STORAGE_KEY_SERVER_URL, url);
+      updateServerStatusBadge();
+      closeServerConfigModal();
+      alert('서버 URL이 저장되었습니다.');
+      loadInitData();
+    }
+
+    function resetServerUrlToDefault() {
+      state.serverUrl = DEFAULT_GAS_URL;
+      localStorage.setItem(STORAGE_KEY_SERVER_URL, DEFAULT_GAS_URL);
+      document.getElementById('input-server-url').value = DEFAULT_GAS_URL;
+      updateServerStatusBadge();
+      closeServerConfigModal();
+      alert('공식 배포 서버 URL로 복원되었습니다.');
+      loadInitData();
+    }
+
+    function resetServerUrlToDemo() {
+      state.serverUrl = '';
+      localStorage.setItem(STORAGE_KEY_SERVER_URL, '');
+      document.getElementById('input-server-url').value = '';
+      updateServerStatusBadge();
+      closeServerConfigModal();
+      alert('로컬 데모 모드로 전환되었습니다.');
+    }
+
+    async function testServerConnection() {
+      const url = document.getElementById('input-server-url').value.trim();
+      if (!url) return;
+      try {
+        const res = await withBlockingLoading(async () => {
+          const r = await fetch(`${url}?action=ping`);
+          return await r.json();
+        }, '서버 연결 상태 확인 중...');
+        if (res && res.success) alert('✅ 서버 연결 성공!');
+      } catch (e) {
+        alert('❌ 서버 연결 실패: ' + e.message);
+      }
+    }
+
+    function formatSeconds(sec) {
+      sec = Math.max(0, parseInt(sec, 10) || 0);
+      const h = Math.floor(sec / 3600);
+      const m = Math.floor((sec % 3600) / 60);
+      const s = sec % 60;
+      if (h > 0) return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    /**
+     * =========================================================================
+     * 로컬 Mock 데이터베이스 (데모 모드)
+     * =========================================================================
+     */
+    const MOCK_STORAGE_KEY = 'AGY_MOCK_DATABASE_V2';
+
+    function initMockDatabaseIfNeeded() {
+      if (!localStorage.getItem(MOCK_STORAGE_KEY)) {
+        const defaultDb = {
+          schools: ['진주중학교', '창원고등학교', '교육청본부'],
+          admins: [
+            { adminId: 'teacher01', password: 'teacher1234!', role: 'SCHOOL_ADMIN', schoolName: '진주중학교', teacherName: '김국어', status: 'APPROVED' },
+            { adminId: 'superadmin', password: 'admin1234!', role: 'SUPER_ADMIN', schoolName: '교육청본부', teacherName: '총괄관리자', status: 'APPROVED' }
+          ],
+          tasks: [
+            {
+              taskId: 'TASK_JINJU_01',
+              schoolName: '진주중학교',
+              ...getPresetTask('persuasive')
+            }
+          ],
+          students: [
+            { studentKey: '진주중학교_1_2_15_홍길동', schoolName: '진주중학교', grade: 1, classNo: 2, studentNo: 15, studentName: '홍길동' },
+            { studentKey: '진주중학교_1_2_16_김수현', schoolName: '진주중학교', grade: 1, classNo: 2, studentNo: 16, studentName: '김수현' },
+            { studentKey: '진주중학교_1_2_17_이준혁', schoolName: '진주중학교', grade: 1, classNo: 2, studentNo: 17, studentName: '이준혁' },
+            { studentKey: '진주중학교_1_2_18_박서연', schoolName: '진주중학교', grade: 1, classNo: 2, studentNo: 18, studentName: '박서연' },
+            { studentKey: '진주중학교_1_2_19_최민우', schoolName: '진주중학교', grade: 1, classNo: 2, studentNo: 19, studentName: '최민우' }
+          ],
+          writings: {
+            '진주중학교_1_2_15_홍길동_TASK_JINJU_01': {
+              writingId: '진주중학교_1_2_15_홍길동_TASK_JINJU_01',
+              studentKey: '진주중학교_1_2_15_홍길동',
+              taskId: 'TASK_JINJU_01',
+              schoolName: '진주중학교',
+              contentJson: {
+                '제목': '스마트폰 사용 제한, 규제보다 자율적 미디어 리터러시 교육이 먼저다',
+                '서론(문제상황과 주장)': '최근 많은 학교에서 수업 집중도 향상을 위해 등교 시 스마트폰을 일괄 수거하고 있습니다. 하지만 일방적인 사용 금지는 디지털 전환 시대에 학생들의 자기조절 역량을 기르는 데 한계가 있습니다. 따라서 무조건적인 규제보다 수업 내 자율적 활용 규칙 수립과 미디어 리터러시 교육이 우선되어야 합니다.',
+                '본론1(주장과 핵심근거)': '첫째, 스마트폰은 단순한 오락 기기가 아니라 실시간 정보 탐색과 협업을 위한 필수 교육 도구입니다. 디지털 교과서 도입과 맞춤형 학습이 확대되는 상황에서 기기 접근을 차단하는 것은 교육의 흐름에 역행합니다.',
+                '본론2(예상반론과 재반박)': '물론 수업 중 SNS 이용이나 게임 몰입으로 인한 면학 분위기 저해를 우려하는 목소리가 큽니다. 그러나 이는 규칙을 어겼을 때의 합의된 벌칙과 올바른 사용 습관 교육으로 충분히 보완할 수 있습니다.',
+                '결론(요약 및 당부)': ''
+              },
+              lastSection: '결론(요약 및 당부)',
+              status: 'TEMP_SAVED',
+              totalTimeSeconds: 1245,
+              activeTypingSeconds: 980,
+              revisionCount: 3,
+              scoreJson: null,
+              totalScore: '',
+              teacherFeedback: '',
+              studentRecordDraft: '',
+              aiEvalResult: null,
+              updatedAt: '2026-11-17 10:45:10'
+            },
+            '진주중학교_1_2_16_김수현_TASK_JINJU_01': {
+              writingId: '진주중학교_1_2_16_김수현_TASK_JINJU_01',
+              studentKey: '진주중학교_1_2_16_김수현',
+              taskId: 'TASK_JINJU_01',
+              schoolName: '진주중학교',
+              contentJson: {
+                '제목': '학교 내 건강한 디지털 쉼표: 스마트폰 일괄 수거의 필요성',
+                '서론(문제상황과 주장)': '스마트폰은 현대인의 필수품이지만 청소년들에게 쉬는 시간과 점심시간마저 화면에 갇히게 만드는 부작용을 낳고 있습니다. 온전한 교우 관계 형성과 건강한 집중을 위해 교내 스마트폰 사용을 제한해야 합니다.',
+                '본론1(주장과 핵심근거)': '첫째, 뇌 발달 단계에 있는 청소년들의 집중력 유지와 수면의 질 개선에 필수적입니다. 연구에 따르면 기기가 눈앞에 있는 것만으로도 인지 능력이 저하됩니다.',
+                '본론2(예상반론과 재반박)': '학습용 검색이 필요하다는 반론이 있지만 학교 구비 태블릿 PC로 대체 가능합니다.',
+                '결론(요약 및 당부)': '학교는 대면 소통을 배우는 공동체입니다. 잠시 멈춤이 우리를 더 가깝게 만들어 줄 것입니다.'
+              },
+              lastSection: '결론(요약 및 당부)',
+              status: 'SUBMITTED',
+              totalTimeSeconds: 1980,
+              activeTypingSeconds: 1650,
+              revisionCount: 5,
+              scoreJson: { '주장의 타당성 및 논거 신뢰성': 28, '반박 및 보완의 논리성': 27, '구조의 완결성 및 어조': 19, 'AI 활용 및 과정 성실성': 18 },
+              totalScore: 92,
+              teacherFeedback: '문제의식을 교우 관계와 인지 발달 측면에서 깊이 있게 서술하였습니다. 반론 대안도 현실적입니다.',
+              studentRecordDraft: "'학교 내 건강한 디지털 쉼표: 스마트폰 일괄 수거의 필요성'을 주제로 한 설득하는 글쓰기 수행평가에서 청소년 인지 발달과 교우 관계 형성이라는 다각적인 관점에서 논거를 수립함. 약 33분간의 높은 집중력을 보이며 초안 이후 5차례에 걸쳐 상대방의 반론(학습용 기기 필요성)에 대한 구체적 대안을 보강하는 등 뛰어난 자기주도적 퇴고 역량을 발휘함.",
+              aiEvalResult: {
+                scores: { '주장의 타당성 및 논거 신뢰성': 28, '반박 및 보완의 논리성': 28, '구조의 완결성 및 어조': 19, 'AI 활용 및 과정 성실성': 19 },
+                comments: {
+                  '주장의 타당성 및 논거 신뢰성': '인지 능력 저하 연구 사례를 근거로 논리적으로 뒷받침함.',
+                  '반박 및 보완의 논리성': '학교 구비 태블릿 활용이라는 현실적인 대안을 제시함.'
+                },
+                overallFeedback: '서론-본론-결론의 구조적 완결성이 매우 뛰어나며 반론 수용 태도가 설득력 있음.',
+                totalScore: 94
+              },
+              updatedAt: '2026-11-17 09:30:00',
+              submittedAt: '2026-11-17 09:30:00'
+            }
+          },
+          revisions: {
+            '진주중학교_1_2_15_홍길동_TASK_JINJU_01': [
+              { logId: 'REV_1', revisionNo: 1, timestamp: '2026-11-17 10:15:00', charCount: 180, timeSpentSeconds: 320, triggerType: '초안 저장', contentSnapshot: { '제목': '스마트폰 사용 제한에 대해', '서론(문제상황과 주장)': '학교에서 스마트폰을 걷는 것은 나쁘다고 생각합니다.' } },
+              { logId: 'REV_2', revisionNo: 2, timestamp: '2026-11-17 10:30:15', charCount: 380, timeSpentSeconds: 780, triggerType: '1차 수정 (논거 보강)', contentSnapshot: { '제목': '스마트폰 사용 제한, 규제보다 자율 교육이 필요하다', '서론(문제상황과 주장)': '일방적 금지보다 자율적 규칙과 미디어 리터러시 교육이 먼저입니다.' } },
+              { logId: 'REV_3', revisionNo: 3, timestamp: '2026-11-17 10:45:10', charCount: 520, timeSpentSeconds: 1245, triggerType: '2차 수정 (반론 심화)', contentSnapshot: { '제목': '스마트폰 사용 제한, 규제보다 자율적 미디어 리터러시 교육이 먼저다', '서론(문제상황과 주장)': '따라서 무조건적인 규제보다 수업 내 자율적 활용 규칙 수립과 미디어 리터러시 교육이 우선되어야 합니다.' } }
+            ]
+          },
+          chatLogs: {
+            '진주중학교_1_2_15_홍길동_TASK_JINJU_01': [
+              { userMessage: '선생님들이 딴짓할까 봐 걱정하는 것에 대해 뭐라고 반박해야 설득력이 있을까요?', aiResponse: '좋은 고민이에요! 반대편의 걱정을 틀렸다고 하기보다 인정하며 자율 규칙 보완책을 제시해 보세요.', timestamp: '2026-11-17 10:32:00' }
+            ]
+          },
+          peerReviews: [
+            {
+              reviewId: 'PEER_01',
+              taskId: 'TASK_JINJU_01',
+              reviewerKey: '진주중학교_1_2_16_김수현',
+              targetWritingId: '진주중학교_1_2_15_홍길동_TASK_JINJU_01',
+              strengths: '단순히 스마트폰을 쓰게 해달라는 게 아니라 미디어 리터러시 교육을 하자는 대안이 참신했어요!',
+              improvements: '수업 시간에 진짜로 학생들이 규칙을 지키게 할 수 있는 방법이 더 나오면 좋겠어요.',
+              sticker: '💡 참신해요',
+              timestamp: '2026-11-17 10:50:00'
+            }
+          ]
+        };
+        localStorage.setItem(MOCK_STORAGE_KEY, JSON.stringify(defaultDb));
+      }
+    }
+
+    function getMockDb() {
+      initMockDatabaseIfNeeded();
+      return JSON.parse(localStorage.getItem(MOCK_STORAGE_KEY));
+    }
+    function saveMockDb(db) { localStorage.setItem(MOCK_STORAGE_KEY, JSON.stringify(db)); }
+
+    function getMockChatLogsForWriting(writingId) {
+      const db = getMockDb();
+      return (db.chatLogs && db.chatLogs[writingId]) || [];
+    }
+
+    function getMockPeerReviewsForWriting(writingId) {
+      const db = getMockDb();
+      return (db.peerReviews || []).filter(p => p.targetWritingId === writingId);
+    }
+
+    function generateFallbackStudentRecordDraft(student, writing, taskTitle) {
+      const minutes = Math.max(12, Math.round((writing.totalTimeSeconds || 0) / 60));
+      const revs = writing.revisionCount || 2;
+      const title = (writing.contentJson && writing.contentJson['제목']) || taskTitle;
+
+      return `'${title}'을(를) 주제로 한 글쓰기 수행평가에서 타당한 논거와 구체적인 사례를 체계적으로 수립하여 완성도 높은 글을 저술함. ` +
+        `약 ${minutes}분간의 지속적인 집중력을 발휘하며 초안 작성 이후 ${revs}차례에 걸쳐 논증의 오류를 점검하고 상대방의 예상 반론을 수용·보완하는 등 자기주도적 퇴고 역량이 매우 뛰어남. ` +
+        `자신의 주장을 논리적인 어조로 설득력 있게 전달하였으며, 과정 중심 평가 전반에 성실하고 적극적인 자세로 참여함.`;
+    }
+
+    /**
+     * 로컬 Mock API 핸들러 (고도화 3대 기능 포함)
+     */
+    function mockApiCall(action, data) {
+      const db = getMockDb();
+
+      switch (action) {
+        case 'getInitData':
+          return { success: true, schools: db.schools, tasksBySchool: {} };
+
+        case 'studentLogin': {
+          const student = db.students.find(s =>
+            s.schoolName === data.schoolName &&
+            s.grade === parseInt(data.grade, 10) &&
+            s.classNo === parseInt(data.classNo, 10) &&
+            s.studentNo === parseInt(data.studentNo, 10) &&
+            s.studentName.trim() === data.studentName.trim()
+          );
+          if (!student) return { success: false, message: '등록되지 않은 학생입니다.' };
+          const task = db.tasks.find(t => t.schoolName === data.schoolName) || db.tasks[0];
+          const writingId = `${student.studentKey}_${task.taskId}`;
+          const existingWriting = db.writings[writingId] || null;
+          return { success: true, studentInfo: student, task, writing: existingWriting };
+        }
+
+        case 'saveWriting': {
+          const writingId = `${data.studentKey}_${data.taskId}`;
+          const now = new Date().toISOString().replace('T', ' ').slice(0, 19);
+          let wr = db.writings[writingId];
+          let revCount = wr ? wr.revisionCount : 0;
+          if (data.isSnapshot) revCount++;
+
+          db.writings[writingId] = {
+            writingId,
+            studentKey: data.studentKey,
+            taskId: data.taskId,
+            schoolName: data.schoolName,
+            contentJson: data.contentJson,
+            lastSection: data.lastSection,
+            status: data.status,
+            totalTimeSeconds: data.totalTimeSeconds,
+            activeTypingSeconds: data.activeTypingSeconds,
+            revisionCount: revCount,
+            scoreJson: wr ? wr.scoreJson : null,
+            totalScore: wr ? wr.totalScore : '',
+            teacherFeedback: wr ? wr.teacherFeedback : '',
+            studentRecordDraft: wr ? wr.studentRecordDraft : '',
+            aiEvalResult: wr ? wr.aiEvalResult : null,
+            updatedAt: now,
+            submittedAt: data.status === 'SUBMITTED' ? now : (wr ? wr.submittedAt : '')
+          };
+
+          if (data.isSnapshot) {
+            if (!db.revisions[writingId]) db.revisions[writingId] = [];
+            let charCount = 0;
+            for (const k in data.contentJson) {
+              if (typeof data.contentJson[k] === 'string') charCount += data.contentJson[k].length;
+            }
+            db.revisions[writingId].push({
+              logId: 'REV_' + Date.now(),
+              revisionNo: revCount,
+              timestamp: now,
+              charCount,
+              timeSpentSeconds: data.totalTimeSeconds,
+              triggerType: data.triggerType || (data.status === 'SUBMITTED' ? '최종 제출' : '임시 저장'),
+              contentSnapshot: JSON.parse(JSON.stringify(data.contentJson))
+            });
+          }
+
+          saveMockDb(db);
+          return { success: true, writingId, revisionCount: revCount, updatedAt: now };
+        }
+
+        case 'getRevisionHistory':
+          return { success: true, history: db.revisions[data.writingId] || [] };
+
+        case 'askChatbot': {
+          const writingId = data.writingId;
+          const userMsg = data.userMessage || '';
+          let aiReply = '작성 중인 내용과 관련하여 흥미로운 질문입니다!\n\n💡 코치 질문: 이 내용을 글로 옮길 때 가장 설득력 있게 전달하려면 어떤 순서로 풀어내는 것이 좋을까요?';
+          if (userMsg.includes('논거') || userMsg.includes('근거')) {
+            aiReply = '좋은 고민이에요! 제시하려는 근거가 독자에게 신뢰를 줄 수 있는 객관적인 사실인지 생각해 보세요.\n\n💡 질문: 그 근거를 뒷받침할 수 있는 구체적인 사례나 통계 자료가 있을까요?';
+          }
+          if (writingId) {
+            if (!db.chatLogs[writingId]) db.chatLogs[writingId] = [];
+            db.chatLogs[writingId].push({ userMessage: userMsg, aiResponse: aiReply, timestamp: new Date().toISOString().slice(0, 19).replace('T', ' ') });
+            saveMockDb(db);
+          }
+          return { success: true, aiResponse: aiReply };
+        }
+
+        case 'adminLogin': {
+          const admin = db.admins.find(a => a.adminId === data.adminId && a.password === data.password);
+          if (!admin) return { success: false, message: '아이디 또는 비밀번호가 올바르지 않습니다.' };
+          const task = db.tasks.find(t => t.schoolName === admin.schoolName) || db.tasks[0];
+          return {
+            success: true,
+            adminInfo: {
+              adminId: admin.adminId, role: admin.role, schoolName: admin.schoolName, teacherName: admin.teacherName,
+              apiProvider: 'GEMINI', hasApiKey: false, maskedApiKey: ''
+            },
+            taskConfig: task
+          };
+        }
+
+        case 'adminSignup': {
+          db.admins.push({
+            adminId: data.adminId, password: data.password, role: 'SCHOOL_ADMIN',
+            schoolName: data.schoolName, teacherName: data.teacherName, status: 'APPROVED'
+          });
+          if (!db.schools.includes(data.schoolName)) db.schools.push(data.schoolName);
+          saveMockDb(db);
+          return { success: true, message: '회원가입이 완료되었습니다.' };
+        }
+
+        case 'saveAdminSettings': {
+          let task = db.tasks.find(t => t.schoolName === data.schoolName);
+          if (!task) {
+            task = { taskId: 'TASK_' + Date.now(), schoolName: data.schoolName };
+            db.tasks.push(task);
+          }
+          task.taskTitle = data.taskTitle;
+          task.deadline = data.deadline;
+          task.writingStructure = data.writingStructure;
+          task.checklistItems = data.checklistItems;
+          task.rubricItems = data.rubricItems;
+          task.systemPrompt = data.systemPrompt;
+          task.peerReviewEnabled = data.peerReviewEnabled;
+          task.peerReviewConfig = data.peerReviewConfig;
+          saveMockDb(db);
+          return { success: true, message: '설정이 저장되었습니다.', taskId: task.taskId };
+        }
+
+        case 'uploadStudentRoster': {
+          data.roster.forEach(r => {
+            const key = `${data.schoolName}_${r.grade}_${r.classNo}_${r.studentNo}_${r.studentName}`;
+            if (!db.students.find(s => s.studentKey === key)) {
+              db.students.push({ studentKey: key, schoolName: data.schoolName, grade: r.grade, classNo: r.classNo, studentNo: r.studentNo, studentName: r.studentName });
+            }
+          });
+          saveMockDb(db);
+          return { success: true, message: `${data.roster.length}명의 학생이 등록되었습니다.` };
+        }
+
+        case 'getSchoolWritings': {
+          const students = db.students.filter(s => s.schoolName === data.schoolName);
+          const result = students.map(st => {
+            const task = db.tasks.find(t => t.schoolName === data.schoolName) || db.tasks[0];
+            const writingId = `${st.studentKey}_${task ? task.taskId : ''}`;
+            const wr = db.writings[writingId] || null;
+            return {
+              studentKey: st.studentKey, grade: st.grade, classNo: st.classNo, studentNo: st.studentNo, studentName: st.studentName,
+              status: wr ? wr.status : 'NOT_STARTED', writing: wr,
+              chatCount: (db.chatLogs[writingId] || []).length
+            };
+          });
+          return { success: true, students: result };
+        }
+
+        case 'saveTeacherEvaluation': {
+          const wr = db.writings[data.writingId];
+          if (wr) {
+            wr.scoreJson = data.scoreJson;
+            wr.totalScore = data.totalScore;
+            wr.teacherFeedback = data.teacherFeedback;
+            saveMockDb(db);
+            return { success: true, message: '평가가 저장되었습니다.' };
+          }
+          return { success: false, message: '글을 찾을 수 없습니다.' };
+        }
+
+        // [신규 고도화 1] AI 1차 자동 채점 Mock
+        case 'aiEvaluateStudent': {
+          const wr = db.writings[data.writingId];
+          const rubrics = data.rubricItems || getPresetTask('persuasive').rubricItems;
+          const scores = {};
+          const comments = {};
+          let total = 0;
+          rubrics.forEach(r => {
+            const sc = Math.round(r.maxScore * 0.92);
+            scores[r.criterion] = sc;
+            comments[r.criterion] = `[${r.criterion}] 본문에서 명확한 논거와 반론 대안이 충실히 제시되었습니다.`;
+            total += sc;
+          });
+          const evalRes = { scores, comments, overallFeedback: '주제의 타당성과 문단 유기성이 뛰어나며, 반론 수용 태도가 매우 우수함.', totalScore: total };
+          if (wr) wr.aiEvalResult = evalRes;
+          saveMockDb(db);
+          return { success: true, evalResult: evalRes };
+        }
+
+        case 'batchAiEvaluate': {
+          const rubrics = data.rubricItems || getPresetTask('persuasive').rubricItems;
+          const results = [];
+          data.writings.forEach(w => {
+            const scores = {};
+            let total = 0;
+            rubrics.forEach(r => {
+              const sc = Math.round(r.maxScore * 0.9);
+              scores[r.criterion] = sc;
+              total += sc;
+            });
+            const evalRes = { scores, overallFeedback: '성실히 논지를 전개함.', totalScore: total };
+            if (db.writings[w.writingId]) db.writings[w.writingId].aiEvalResult = evalRes;
+            results.push({ writingId: w.writingId, evalResult: evalRes });
+          });
+          saveMockDb(db);
+          return { success: true, results, message: `${results.length}명의 학생에 대한 AI 1차 자동 채점이 완료되었습니다.` };
+        }
+
+        // [신규 고도화 2] 생기부 과세특 초안 생성 Mock
+        case 'generateStudentRecord': {
+          const wr = db.writings[data.writingId];
+          const draft = generateFallbackStudentRecordDraft(data.studentInfo, data.writing, data.taskTitle);
+          if (wr) wr.studentRecordDraft = draft;
+          saveMockDb(db);
+          return { success: true, recordDraft: draft };
+        }
+
+        case 'batchGenerateStudentRecords': {
+          const results = [];
+          data.studentWritingList.forEach(item => {
+            const draft = generateFallbackStudentRecordDraft(item.studentInfo, item.writing, data.taskTitle);
+            if (db.writings[item.writingId]) db.writings[item.writingId].studentRecordDraft = draft;
+            results.push({ writingId: item.writingId, recordDraft: draft });
+          });
+          saveMockDb(db);
+          return { success: true, results, message: `${results.length}명의 학생 생기부 과세특 문안이 일괄 생성되었습니다.` };
+        }
+
+        case 'saveStudentRecordDraft': {
+          if (db.writings[data.writingId]) {
+            db.writings[data.writingId].studentRecordDraft = data.recordDraft;
+            saveMockDb(db);
+            return { success: true, message: '저장되었습니다.' };
+          }
+          return { success: false, message: '글을 찾을 수 없습니다.' };
+        }
+
+        // [신규 고도화 3] 동료평가 Mock
+        case 'getPeerReviewTargets': {
+          const eligible = Object.values(db.writings).filter(w =>
+            w.studentKey !== data.studentKey && w.status === 'SUBMITTED'
+          );
+          const targets = eligible.slice(0, 2).map((item, idx) => ({
+            blindId: `동료 학생 작품 #${idx + 1}`,
+            writingId: item.writingId,
+            targetStudentKey: item.studentKey,
+            contentJson: item.contentJson
+          }));
+          return { success: true, targets };
+        }
+
+        case 'submitPeerReview': {
+          if (!db.peerReviews) db.peerReviews = [];
+          db.peerReviews.push({
+            reviewId: 'PEER_' + Date.now(),
+            taskId: data.taskId,
+            reviewerKey: data.reviewerKey,
+            targetWritingId: data.targetWritingId,
+            strengths: data.strengths,
+            improvements: data.improvements,
+            sticker: data.sticker,
+            timestamp: new Date().toISOString().replace('T', ' ').slice(0, 19)
+          });
+          saveMockDb(db);
+          return { success: true, message: '등록되었습니다.' };
+        }
+
+        case 'getStudentReceivedPeerReviews': {
+          const reviews = (db.peerReviews || []).filter(p => p.targetWritingId === data.writingId);
+          return { success: true, reviews };
+        }
+
+        default:
+          return { success: false, message: '지원되지 않는 요청' };
+      }
+    }
+  </script>
+</body>
+</html>
