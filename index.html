@@ -138,6 +138,15 @@
               <label class="block text-xs font-semibold text-slate-700 mb-1">학생 이름</label>
               <input id="login-student-name" type="text" placeholder="홍길동" class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
             </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1 flex items-center justify-between">
+                <span>비밀번호 (4자리 이상)</span>
+                <span class="text-[11px] text-blue-600 font-medium">최초 접속 시 자동 설정됨</span>
+              </label>
+              <input id="login-student-pw" type="password" placeholder="비밀번호 입력 (최초 접속 시 등록 / 재접속 시 입력)" class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+              <p class="text-[11px] text-slate-400 mt-1">🔒 타인이 나의 수행평가를 열람·수정하지 못하도록 본인만의 비밀번호를 설정하세요.</p>
+            </div>
           </div>
 
           <button onclick="handleStudentLoginSubmit()" class="w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/25 transition transform active:scale-[0.98] flex items-center justify-center space-x-2">
@@ -149,13 +158,13 @@
           <div class="pt-4 border-t border-slate-100">
             <p class="text-xs text-slate-500 mb-2 font-medium">⚡ 빠른 테스트용 샘플 학생 계정:</p>
             <div class="flex flex-wrap gap-2">
-              <button onclick="quickFillStudent('진주중학교', 1, 2, 15, '홍길동')" class="px-2.5 py-1 text-xs bg-slate-100 hover:bg-blue-50 hover:text-blue-600 rounded-lg border border-slate-200 transition">
-                진주중 1-2 15번 홍길동 (작성중)
+              <button onclick="quickFillStudent('진주중학교', 1, 2, 15, '홍길동', '')" class="px-2.5 py-1 text-xs bg-slate-100 hover:bg-blue-50 hover:text-blue-600 rounded-lg border border-slate-200 transition">
+                진주중 1-2 15번 홍길동 (최초 설정 체험)
               </button>
-              <button onclick="quickFillStudent('진주중학교', 1, 2, 16, '김수현')" class="px-2.5 py-1 text-xs bg-slate-100 hover:bg-emerald-50 hover:text-emerald-600 rounded-lg border border-slate-200 transition">
-                진주중 1-2 16번 김수현 (제출완료)
+              <button onclick="quickFillStudent('진주중학교', 1, 2, 16, '김수현', '1234')" class="px-2.5 py-1 text-xs bg-slate-100 hover:bg-emerald-50 hover:text-emerald-600 rounded-lg border border-slate-200 transition">
+                진주중 1-2 16번 김수현 (비번 1234 설정됨)
               </button>
-              <button onclick="quickFillStudent('진주중학교', 1, 2, 17, '이준혁')" class="px-2.5 py-1 text-xs bg-slate-100 hover:bg-amber-50 hover:text-amber-600 rounded-lg border border-slate-200 transition">
+              <button onclick="quickFillStudent('진주중학교', 1, 2, 17, '이준혁', '')" class="px-2.5 py-1 text-xs bg-slate-100 hover:bg-amber-50 hover:text-amber-600 rounded-lg border border-slate-200 transition">
                 진주중 1-2 17번 이준혁 (미시작)
               </button>
             </div>
@@ -501,6 +510,7 @@
                   <th class="px-4 py-3 text-center">수정 기록</th>
                   <th class="px-4 py-3 text-center">AI 가채점</th>
                   <th class="px-4 py-3 text-center">최종 점수</th>
+                  <th class="px-4 py-3 text-center">비밀번호 보안</th>
                   <th class="px-4 py-3 text-right">상세 및 평가</th>
                 </tr>
               </thead>
@@ -717,6 +727,10 @@
         </div>
 
         <div class="flex items-center space-x-2">
+          <button onclick="resetCurrentStudentPasswordFromModal()" class="px-3 py-1.5 bg-rose-900/60 hover:bg-rose-800 text-rose-200 text-xs font-medium rounded-lg transition flex items-center space-x-1" title="학생이 비밀번호를 잊어버린 경우 초기화">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>
+            <span>비밀번호 초기화</span>
+          </button>
           <button onclick="printStudentWork()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium rounded-lg transition flex items-center space-x-1">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
             <span>인쇄 / PDF</span>
@@ -931,6 +945,34 @@
           <button onclick="resetServerUrlToDemo()" class="px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg transition">데모 모드</button>
           <button onclick="saveServerUrlConfig()" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition">저장</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- [MODAL 5.5] 학생 최초 로그인 비밀번호 설정 팝업 -->
+  <div id="modal-student-password-setup" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-2xl shadow-xl border border-slate-200 p-6 space-y-4">
+      <div class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center mx-auto">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+      </div>
+      <div class="text-center space-y-1">
+        <h3 class="font-bold text-base text-slate-900">수행평가 보호 비밀번호 설정</h3>
+        <p class="text-xs text-slate-500">최초 접속자입니다. 타인이 내 글을 수정하거나 제출하지 못하도록 비밀번호를 설정해 주세요.</p>
+      </div>
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">비밀번호 (4자리 이상)</label>
+          <input id="setup-student-pw1" type="password" placeholder="비밀번호 입력" class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">비밀번호 확인</label>
+          <input id="setup-student-pw2" type="password" placeholder="비밀번호 다시 입력" class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+        </div>
+      </div>
+      <div class="flex space-x-2 pt-1">
+        <button onclick="closeStudentPasswordSetupModal()" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition">취소</button>
+        <button onclick="submitStudentPasswordSetup()" class="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-md transition">설정 및 시작</button>
       </div>
     </div>
   </div>
@@ -1180,12 +1222,15 @@
       });
     }
 
-    function quickFillStudent(sch, g, c, n, name) {
+    let pendingStudentLoginData = null;
+
+    function quickFillStudent(sch, g, c, n, name, pw = '') {
       document.getElementById('login-student-school').value = sch;
       document.getElementById('login-student-grade').value = g;
       document.getElementById('login-student-class').value = c;
       document.getElementById('login-student-no').value = n;
       document.getElementById('login-student-name').value = name;
+      document.getElementById('login-student-pw').value = pw;
     }
 
     function quickFillAdmin(id, pw) {
@@ -1199,15 +1244,24 @@
       const classNo = document.getElementById('login-student-class').value;
       const studentNo = document.getElementById('login-student-no').value;
       const studentName = document.getElementById('login-student-name').value;
+      const password = (document.getElementById('login-student-pw').value || '').trim();
 
       if (!schoolName || !grade || !classNo || !studentNo || !studentName) {
-        alert('모든 학생 정보를 입력해 주세요.');
+        alert('모든 학생 정보를 빠짐없이 입력해 주세요.');
         return;
       }
 
+      pendingStudentLoginData = { schoolName, grade, classNo, studentNo, studentName };
+
       const res = await apiCall('studentLogin', {
-        schoolName, grade, classNo, studentNo, studentName
-      }, '학생 정보를 확인하고 글을 불러오는 중입니다...');
+        schoolName, grade, classNo, studentNo, studentName, password
+      }, '학생 정보를 확인하고 있습니다...');
+
+      if (res && res.needPasswordSetup) {
+        // [최초 로그인] 비밀번호 미설정 상태 -> 설정 팝업 오픈
+        openStudentPasswordSetupModal();
+        return;
+      }
 
       if (res && res.success) {
         state.currentUser = { type: 'student', data: res.studentInfo };
@@ -1219,6 +1273,60 @@
         initStudentWorkspace();
       } else {
         alert(res.message || '로그인에 실패했습니다.');
+        if (res.needPasswordInput) {
+          document.getElementById('login-student-pw').focus();
+        }
+      }
+    }
+
+    function openStudentPasswordSetupModal() {
+      document.getElementById('setup-student-pw1').value = '';
+      document.getElementById('setup-student-pw2').value = '';
+      document.getElementById('modal-student-password-setup').classList.remove('hidden');
+      setTimeout(() => document.getElementById('setup-student-pw1').focus(), 100);
+    }
+
+    function closeStudentPasswordSetupModal() {
+      document.getElementById('modal-student-password-setup').classList.add('hidden');
+    }
+
+    async function submitStudentPasswordSetup() {
+      const pw1 = document.getElementById('setup-student-pw1').value.trim();
+      const pw2 = document.getElementById('setup-student-pw2').value.trim();
+
+      if (pw1.length < 4) {
+        alert('비밀번호는 최소 4자리 이상으로 설정해 주세요.');
+        return;
+      }
+      if (pw1 !== pw2) {
+        alert('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
+        return;
+      }
+
+      if (!pendingStudentLoginData) {
+        alert('학생 정보가 유실되었습니다. 다시 로그인해 주세요.');
+        closeStudentPasswordSetupModal();
+        return;
+      }
+
+      const res = await apiCall('studentLogin', {
+        ...pendingStudentLoginData,
+        password: pw1,
+        isSettingPassword: true
+      }, '비밀번호를 등록하고 글을 불러오는 중입니다...');
+
+      if (res && res.success) {
+        closeStudentPasswordSetupModal();
+        alert('🔒 비밀번호가 성공적으로 설정되었습니다!\n다음 로그인 시에도 동일한 비밀번호가 필요하므로 꼭 기억해 주세요.');
+        state.currentUser = { type: 'student', data: res.studentInfo };
+        state.currentTask = res.task;
+        state.currentWriting = res.writing || null;
+        sessionStorage.setItem(STORAGE_KEY_STUDENT_SESSION, JSON.stringify(state.currentUser));
+
+        showView('student');
+        initStudentWorkspace();
+      } else {
+        alert(res.message || '비밀번호 설정에 실패했습니다.');
       }
     }
 
@@ -1939,6 +2047,13 @@
           `<span class="font-bold text-blue-600">${wr.totalScore}점</span>` :
           `<span class="text-slate-400 font-normal">미채점</span>`;
 
+        const passBadge = st.hasPassword ?
+          `<span class="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+             <span>🔒 설정됨</span>
+             <button onclick="promptResetStudentPassword('${st.studentKey}', '${escapeHtml(st.studentName)}')" class="text-rose-600 hover:text-rose-800 font-bold ml-1 hover:underline" title="비밀번호 초기화">초기화</button>
+           </span>` :
+          `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-500">🔓 미설정</span>`;
+
         tr.innerHTML = `
           <td class="px-4 py-3 font-semibold text-slate-900">
             ${st.grade}학년 ${st.classNo}반 ${st.studentNo}번 <span class="font-bold text-blue-600">${st.studentName}</span>
@@ -1954,6 +2069,7 @@
           </td>
           <td class="px-4 py-3 text-center">${aiScoreBadge}</td>
           <td class="px-4 py-3 text-center">${scoreText}</td>
+          <td class="px-4 py-3 text-center">${passBadge}</td>
           <td class="px-4 py-3 text-right">
             <button onclick="openStudentEvaluationModal('${st.studentKey}')" class="px-3 py-1.5 bg-blue-50 hover:bg-blue-600 hover:text-white text-blue-700 rounded-lg text-xs font-bold transition">
               과정 열람 및 채점
@@ -2245,6 +2361,27 @@
      * 학생 평가 모달 열기 & Replay 타임라인
      * =========================================================================
      */
+    async function promptResetStudentPassword(studentKey, studentName) {
+      if (!confirm(`[${studentName}] 학생의 비밀번호를 초기화하시겠습니까?\n\n초기화 시 기존 비밀번호가 삭제되며, 학생이 다시 로그인할 때 새로운 비밀번호를 설정할 수 있습니다.`)) {
+        return;
+      }
+
+      const res = await apiCall('resetStudentPassword', { studentKey }, `${studentName} 학생 비밀번호 초기화 중...`);
+      if (res && res.success) {
+        alert(res.message || '비밀번호가 초기화되었습니다.');
+        const st = state.teacherStudents.find(s => s.studentKey === studentKey);
+        if (st) st.hasPassword = false;
+        renderTeacherStudentTable();
+      } else {
+        alert(res.message || '초기화에 실패했습니다.');
+      }
+    }
+
+    async function resetCurrentStudentPasswordFromModal() {
+      if (!state.evalCurrentStudent) return;
+      await promptResetStudentPassword(state.evalCurrentStudent.studentKey, state.evalCurrentStudent.studentName);
+    }
+
     async function openStudentEvaluationModal(studentKey) {
       const student = state.teacherStudents.find(s => s.studentKey === studentKey);
       if (!student) return;
@@ -2928,7 +3065,7 @@
      * 로컬 Mock 데이터베이스 (데모 모드)
      * =========================================================================
      */
-    const MOCK_STORAGE_KEY = 'AGY_MOCK_DATABASE_V2';
+    const MOCK_STORAGE_KEY = 'AGY_MOCK_DATABASE_V3';
 
     function initMockDatabaseIfNeeded() {
       if (!localStorage.getItem(MOCK_STORAGE_KEY)) {
@@ -2946,11 +3083,11 @@
             }
           ],
           students: [
-            { studentKey: '진주중학교_1_2_15_홍길동', schoolName: '진주중학교', grade: 1, classNo: 2, studentNo: 15, studentName: '홍길동' },
-            { studentKey: '진주중학교_1_2_16_김수현', schoolName: '진주중학교', grade: 1, classNo: 2, studentNo: 16, studentName: '김수현' },
-            { studentKey: '진주중학교_1_2_17_이준혁', schoolName: '진주중학교', grade: 1, classNo: 2, studentNo: 17, studentName: '이준혁' },
-            { studentKey: '진주중학교_1_2_18_박서연', schoolName: '진주중학교', grade: 1, classNo: 2, studentNo: 18, studentName: '박서연' },
-            { studentKey: '진주중학교_1_2_19_최민우', schoolName: '진주중학교', grade: 1, classNo: 2, studentNo: 19, studentName: '최민우' }
+            { studentKey: '진주중학교_1_2_15_홍길동', schoolName: '진주중학교', grade: 1, classNo: 2, studentNo: 15, studentName: '홍길동', password: '' },
+            { studentKey: '진주중학교_1_2_16_김수현', schoolName: '진주중학교', grade: 1, classNo: 2, studentNo: 16, studentName: '김수현', password: '1234' },
+            { studentKey: '진주중학교_1_2_17_이준혁', schoolName: '진주중학교', grade: 1, classNo: 2, studentNo: 17, studentName: '이준혁', password: '' },
+            { studentKey: '진주중학교_1_2_18_박서연', schoolName: '진주중학교', grade: 1, classNo: 2, studentNo: 18, studentName: '박서연', password: '' },
+            { studentKey: '진주중학교_1_2_19_최민우', schoolName: '진주중학교', grade: 1, classNo: 2, studentNo: 19, studentName: '최민우', password: '' }
           ],
           writings: {
             '진주중학교_1_2_15_홍길동_TASK_JINJU_01': {
@@ -3085,6 +3222,37 @@
             s.studentName.trim() === data.studentName.trim()
           );
           if (!student) return { success: false, message: '등록되지 않은 학생입니다.' };
+
+          const inputPass = (data.password || '').trim();
+
+          // 최초 로그인 (비밀번호 미설정 상태)
+          if (!student.password) {
+            if (!inputPass) {
+              return {
+                success: false,
+                needPasswordSetup: true,
+                message: '최초 로그인입니다. 비밀번호를 설정해 주세요.'
+              };
+            }
+            if (inputPass.length < 4) {
+              return {
+                success: false,
+                needPasswordSetup: true,
+                message: '비밀번호는 최소 4자리 이상이어야 합니다.'
+              };
+            }
+            student.password = inputPass;
+            saveMockDb(db);
+          } else {
+            // 기존 비밀번호 검증
+            if (!inputPass) {
+              return { success: false, needPasswordInput: true, message: '비밀번호를 입력해 주세요.' };
+            }
+            if (inputPass !== student.password) {
+              return { success: false, message: '비밀번호가 일치하지 않습니다. (분실 시 선생님께 초기화를 요청하세요.)' };
+            }
+          }
+
           const task = db.tasks.find(t => t.schoolName === data.schoolName) || db.tasks[0];
           const writingId = `${student.studentKey}_${task.taskId}`;
           const existingWriting = db.writings[writingId] || null;
@@ -3218,11 +3386,23 @@
             const wr = db.writings[writingId] || null;
             return {
               studentKey: st.studentKey, grade: st.grade, classNo: st.classNo, studentNo: st.studentNo, studentName: st.studentName,
-              status: wr ? wr.status : 'NOT_STARTED', writing: wr,
+              status: wr ? wr.status : 'NOT_STARTED',
+              hasPassword: !!st.password,
+              writing: wr,
               chatCount: (db.chatLogs[writingId] || []).length
             };
           });
           return { success: true, students: result };
+        }
+
+        case 'resetStudentPassword': {
+          const student = db.students.find(s => s.studentKey === data.studentKey);
+          if (student) {
+            student.password = '';
+            saveMockDb(db);
+            return { success: true, message: '학생의 비밀번호가 성공적으로 초기화되었습니다.' };
+          }
+          return { success: false, message: '학생을 찾을 수 없습니다.' };
         }
 
         case 'saveTeacherEvaluation': {

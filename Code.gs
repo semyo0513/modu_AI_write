@@ -87,10 +87,10 @@ function setupDatabase() {
   var sStudents = getOrCreateSheet(ss, SHEET_STUDENTS);
   if (sStudents.getLastRow() === 0) {
     sStudents.appendRow([
-      'student_key', 'school_name', 'grade', 'class_no', 'student_no', 'student_name', 'created_at'
+      'student_key', 'school_name', 'grade', 'class_no', 'student_no', 'student_name', 'password_hash', 'created_at'
     ]);
-    sStudents.appendRow(['교육청본부_1_1_1_김하늘', '교육청본부', 1, 1, 1, '김하늘', formatDate(new Date())]);
-    sStudents.appendRow(['교육청본부_1_1_2_이바다', '교육청본부', 1, 1, 2, '이바다', formatDate(new Date())]);
+    sStudents.appendRow(['교육청본부_1_1_1_김하늘', '교육청본부', 1, 1, 1, '김하늘', '', formatDate(new Date())]);
+    sStudents.appendRow(['교육청본부_1_1_2_이바다', '교육청본부', 1, 1, 2, '이바다', '', formatDate(new Date())]);
   }
 
   // ④ Writings 테이블 (수행평가 제출 및 교사 피드백 + 생기부 초안 + AI 가채점)
@@ -199,6 +199,9 @@ function doPost(e) {
         break;
       case 'getSchoolWritings':
         res = handleGetSchoolWritings(data);
+        break;
+      case 'resetStudentPassword':
+        res = handleResetStudentPassword(data);
         break;
       case 'saveTeacherEvaluation':
         res = handleSaveTeacherEvaluation(data);
@@ -315,6 +318,8 @@ function handleStudentLogin(data) {
   var classNo = parseInt(data.classNo, 10);
   var studentNo = parseInt(data.studentNo, 10);
   var studentName = (data.studentName || '').trim();
+  var inputPassword = (data.password || '').trim();
+  var isSettingPassword = data.isSettingPassword === true;
 
   if (!schoolName || !grade || !classNo || !studentNo || !studentName) {
     return { success: false, message: '모든 학생 정보를 정확히 입력해 주세요.' };
@@ -324,8 +329,10 @@ function handleStudentLogin(data) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sStudents = ss.getSheetByName(SHEET_STUDENTS);
 
-  var isRegistered = false;
+  var studentRowIndex = -1;
+  var passCol = 7;
   if (sStudents && sStudents.getLastRow() > 1) {
+    passCol = getStudentPasswordColIndex(sStudents);
     var sData = sStudents.getDataRange().getValues();
     for (var i = 1; i < sData.length; i++) {
       if (sData[i][0] === studentKey ||
@@ -334,14 +341,52 @@ function handleStudentLogin(data) {
           parseInt(sData[i][3], 10) === classNo &&
           parseInt(sData[i][4], 10) === studentNo &&
           String(sData[i][5]).trim() === studentName)) {
-        isRegistered = true;
+        studentRowIndex = i + 1;
         break;
       }
     }
   }
 
-  if (!isRegistered) {
+  if (studentRowIndex === -1) {
     return { success: false, message: '등록되지 않은 학생입니다. 학교, 학년, 반, 번호, 이름을 다시 확인하세요.' };
+  }
+
+  // 비밀번호 검증 및 최초 설정 처리
+  var storedHash = String(sStudents.getRange(studentRowIndex, passCol).getValue() || '').trim();
+
+  if (!storedHash) {
+    // [최초 로그인] 비밀번호 미설정 상태
+    if (!inputPassword) {
+      return {
+        success: false,
+        needPasswordSetup: true,
+        message: '최초 로그인입니다. 타인이 나의 수행평가를 열람·수정하지 못하도록 본인만의 비밀번호를 설정해 주세요.'
+      };
+    }
+    if (inputPassword.length < 4) {
+      return {
+        success: false,
+        needPasswordSetup: true,
+        message: '비밀번호는 최소 4자리 이상이어야 합니다.'
+      };
+    }
+    // 비밀번호 신규 등록
+    sStudents.getRange(studentRowIndex, passCol).setValue(hashPassword(inputPassword));
+  } else {
+    // [재로그인] 기존 비밀번호 검증
+    if (!inputPassword) {
+      return {
+        success: false,
+        needPasswordInput: true,
+        message: '비밀번호를 입력해 주세요.'
+      };
+    }
+    if (hashPassword(inputPassword) !== storedHash) {
+      return {
+        success: false,
+        message: '비밀번호가 일치하지 않습니다. (분실 시 선생님께 비밀번호 초기화를 요청하세요.)'
+      };
+    }
   }
 
   var sTasks = ss.getSheetByName(SHEET_TASKS);
@@ -762,15 +807,16 @@ function handleUploadStudentRoster(data) {
     if (g && c && n && name) {
       var studentKey = schoolName + '_' + g + '_' + c + '_' + n + '_' + name;
       if (!existingKeys[studentKey]) {
-        rowsToAdd.push([studentKey, schoolName, g, c, n, name, nowStr]);
+        rowsToAdd.push([studentKey, schoolName, g, c, n, name, '', nowStr]);
         existingKeys[studentKey] = true;
       }
     }
   }
 
   if (rowsToAdd.length > 0) {
+    getStudentPasswordColIndex(sStudents); // 컬럼 보장
     var startRow = sStudents.getLastRow() + 1;
-    sStudents.getRange(startRow, 1, rowsToAdd.length, 7).setValues(rowsToAdd);
+    sStudents.getRange(startRow, 1, rowsToAdd.length, rowsToAdd[0].length).setValues(rowsToAdd);
   }
 
   return {
@@ -788,16 +834,20 @@ function handleGetSchoolWritings(data) {
 
   var sStudents = ss.getSheetByName(SHEET_STUDENTS);
   var students = [];
+  var passCol = 7;
   if (sStudents && sStudents.getLastRow() > 1) {
+    passCol = getStudentPasswordColIndex(sStudents);
     var sData = sStudents.getDataRange().getValues();
     for (var i = 1; i < sData.length; i++) {
       if (sData[i][1] === schoolName) {
+        var hasPassword = !!(sData[i][passCol - 1] && String(sData[i][passCol - 1]).trim());
         students.push({
           studentKey: sData[i][0],
           grade: sData[i][2],
           classNo: sData[i][3],
           studentNo: sData[i][4],
-          studentName: sData[i][5]
+          studentName: sData[i][5],
+          hasPassword: hasPassword
         });
       }
     }
@@ -852,12 +902,61 @@ function handleGetSchoolWritings(data) {
       studentNo: st.studentNo,
       studentName: st.studentName,
       status: status,
+      hasPassword: st.hasPassword,
       writing: wr,
       chatCount: chatCountMap[st.studentKey] || 0
     };
   });
 
   return { success: true, students: resultList };
+}
+
+/**
+ * [액션] 교사 관리자의 학생 비밀번호 초기화 (타인 접근 방지 해제 및 재설정 허용)
+ */
+function handleResetStudentPassword(data) {
+  var studentKey = data.studentKey;
+  if (!studentKey) return { success: false, message: 'studentKey가 필요합니다.' };
+
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sStudents = ss.getSheetByName(SHEET_STUDENTS);
+
+  if (sStudents && sStudents.getLastRow() > 1) {
+    var sData = sStudents.getDataRange().getValues();
+    var passCol = getStudentPasswordColIndex(sStudents);
+
+    for (var i = 1; i < sData.length; i++) {
+      if (sData[i][0] === studentKey) {
+        sStudents.getRange(i + 1, passCol).setValue('');
+        return {
+          success: true,
+          message: '학생의 비밀번호가 성공적으로 초기화되었습니다. 학생이 다시 접속 시 새로운 비밀번호를 설정할 수 있습니다.'
+        };
+      }
+    }
+  }
+
+  return { success: false, message: '해당 학생을 찾을 수 없습니다.' };
+}
+
+/**
+ * Students 시트의 password_hash 컬럼 위치(1-based)를 동적으로 조회하고 없으면 자동 생성
+ */
+function getStudentPasswordColIndex(sStudents) {
+  var lastCol = sStudents.getLastColumn();
+  if (lastCol === 0) return 7;
+
+  var headers = sStudents.getRange(1, 1, 1, lastCol).getValues()[0];
+  for (var i = 0; i < headers.length; i++) {
+    if (headers[i] === 'password_hash') {
+      return i + 1;
+    }
+  }
+
+  // 없으면 created_at 앞 또는 맨 끝에 추가
+  var newCol = lastCol + 1;
+  sStudents.getRange(1, newCol).setValue('password_hash');
+  return newCol;
 }
 
 function handleSaveTeacherEvaluation(data) {
