@@ -68,8 +68,8 @@
           <span id="server-status-text">로컬 데모 모드</span>
         </div>
 
-        <!-- 서버 URL 설정 버튼 -->
-        <button onclick="openServerConfigModal()" class="p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition" title="Google Apps Script 웹앱 URL 설정">
+        <!-- 서버 URL 설정 버튼 (슈퍼관리자 전용) -->
+        <button id="btn-header-server-config" onclick="openServerConfigModal()" class="hidden p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition" title="Google Apps Script 웹앱 URL 설정 (슈퍼관리자 전용)">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -198,9 +198,15 @@
             <button onclick="openSignupModal()" class="text-blue-600 hover:underline font-semibold">
               신규 학교 교사 회원가입
             </button>
-            <button onclick="quickFillAdmin('teacher01', 'teacher1234!')" class="text-slate-500 hover:text-slate-800">
-              ⚡ 샘플 교사 계정 자동입력
-            </button>
+            <div class="flex items-center space-x-2">
+              <button onclick="quickFillAdmin('teacher01', 'teacher1234!')" class="text-slate-500 hover:text-slate-800" title="일반 학교 교사 계정">
+                ⚡ 일반교사
+              </button>
+              <span class="text-slate-300">|</span>
+              <button onclick="quickFillAdmin('superadmin', 'admin1234!')" class="text-purple-600 hover:text-purple-800 font-semibold" title="슈퍼관리자 계정 (백엔드 URL 및 전체 학교 관리)">
+                ⚡ 슈퍼관리자
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -679,23 +685,47 @@
         </div>
 
         <!-- [C-5] 탭 5: 슈퍼관리자 메뉴 -->
-        <div id="admin-pane-super" class="p-6 space-y-4 hidden">
-          <h4 class="font-bold text-sm text-slate-900">전체 학교 관리자 승인 현황</h4>
-          <div class="overflow-x-auto border border-slate-200 rounded-xl">
-            <table class="w-full text-xs text-left">
-              <thead class="bg-slate-50 text-slate-700">
-                <tr>
-                  <th class="px-4 py-2.5">아이디</th>
-                  <th class="px-4 py-2.5">교사명</th>
-                  <th class="px-4 py-2.5">소속 학교</th>
-                  <th class="px-4 py-2.5">권한</th>
-                  <th class="px-4 py-2.5">승인 상태</th>
-                  <th class="px-4 py-2.5">가입 일시</th>
-                  <th class="px-4 py-2.5 text-right">관리</th>
-                </tr>
-              </thead>
-              <tbody id="super-admin-tbody" class="divide-y divide-slate-100"></tbody>
-            </table>
+        <div id="admin-pane-super" class="p-6 space-y-6 hidden">
+          <!-- 상단: 백엔드 서버 URL 설정 카드 (슈퍼관리자 전용) -->
+          <div class="bg-gradient-to-r from-slate-900 to-indigo-950 text-white rounded-2xl p-5 shadow-sm border border-slate-800">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <div class="flex items-center space-x-2">
+                  <span class="px-2 py-0.5 text-[11px] font-bold bg-amber-400 text-slate-900 rounded-md">SUPER_ADMIN 전용</span>
+                  <h4 class="font-bold text-base text-white">Google Apps Script 백엔드 연동 설정</h4>
+                </div>
+                <p class="text-xs text-slate-300 mt-1">
+                  학교별 글쓰기 데이터 및 채점 로그를 중앙 구글 시트와 연동하는 Apps Script 배포 URL 관리 기능입니다.
+                </p>
+                <div class="mt-2 text-xs font-mono text-indigo-200 bg-black/30 px-3 py-1.5 rounded-lg break-all inline-block max-w-full">
+                  현재 연동 URL: <span id="super-pane-server-url-display">로컬 데모 모드</span>
+                </div>
+              </div>
+              <button onclick="openServerConfigModal()" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl shadow-md transition flex items-center justify-center space-x-1.5 whitespace-nowrap self-start sm:self-center">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <span>백엔드 URL 설정 변경</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <h4 class="font-bold text-sm text-slate-900">전체 학교 관리자 승인 현황</h4>
+            <div class="overflow-x-auto border border-slate-200 rounded-xl">
+              <table class="w-full text-xs text-left">
+                <thead class="bg-slate-50 text-slate-700">
+                  <tr>
+                    <th class="px-4 py-2.5">아이디</th>
+                    <th class="px-4 py-2.5">교사명</th>
+                    <th class="px-4 py-2.5">소속 학교</th>
+                    <th class="px-4 py-2.5">권한</th>
+                    <th class="px-4 py-2.5">승인 상태</th>
+                    <th class="px-4 py-2.5">가입 일시</th>
+                    <th class="px-4 py-2.5 text-right">관리</th>
+                  </tr>
+                </thead>
+                <tbody id="super-admin-tbody" class="divide-y divide-slate-100"></tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
@@ -930,7 +960,10 @@
   <div id="modal-server-config" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-lg rounded-2xl shadow-xl border border-slate-200 p-6 space-y-4">
       <div class="flex items-center justify-between">
-        <h3 class="font-bold text-base text-slate-900">Google Apps Script 백엔드 설정</h3>
+        <div class="flex items-center space-x-2">
+          <h3 class="font-bold text-base text-slate-900">Google Apps Script 백엔드 설정</h3>
+          <span class="px-2 py-0.5 text-[11px] font-bold bg-purple-100 text-purple-700 rounded-md">SUPER_ADMIN 전용</span>
+        </div>
         <button onclick="closeServerConfigModal()" class="text-slate-400 hover:text-slate-600">✕</button>
       </div>
       <p class="text-xs text-slate-500 leading-relaxed">구글 시트의 Web App 배포 URL을 입력하세요. 비워두면 로컬 데모 모드로 작동합니다.</p>
@@ -1116,14 +1149,17 @@
     function updateServerStatusBadge() {
       const pill = document.getElementById('server-status-pill');
       const text = document.getElementById('server-status-text');
+      const superUrlDisplay = document.getElementById('super-pane-server-url-display');
       if (state.serverUrl && state.serverUrl.trim() !== '') {
         pill.className = 'flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200';
         pill.querySelector('span').className = 'w-2 h-2 rounded-full bg-emerald-500 animate-pulse';
         text.innerText = '구글 시트 실서버 연동';
+        if (superUrlDisplay) superUrlDisplay.innerText = state.serverUrl;
       } else {
         pill.className = 'flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200';
         pill.querySelector('span').className = 'w-2 h-2 rounded-full bg-amber-500 animate-pulse';
         text.innerText = '로컬 데모 모드 (체험)';
+        if (superUrlDisplay) superUrlDisplay.innerText = '로컬 데모 모드 (서버 미연동)';
       }
     }
 
@@ -1351,6 +1387,10 @@
       }
     }
 
+    function isSuperAdmin() {
+      return !!(state.currentUser && state.currentUser.type === 'admin' && state.currentUser.data && state.currentUser.data.role === 'SUPER_ADMIN');
+    }
+
     function handleLogout() {
       if (confirm('로그아웃 하시겠습니까?')) {
         stopTimers();
@@ -1359,6 +1399,13 @@
         state.currentWriting = null;
         sessionStorage.removeItem(STORAGE_KEY_STUDENT_SESSION);
         sessionStorage.removeItem(STORAGE_KEY_ADMIN_SESSION);
+
+        // 슈퍼관리자 전용 UI 비활성화
+        const headerServerBtn = document.getElementById('btn-header-server-config');
+        if (headerServerBtn) headerServerBtn.classList.add('hidden');
+        const superTab = document.getElementById('admin-tab-super');
+        if (superTab) superTab.classList.add('hidden');
+
         showView('login');
       }
     }
@@ -1370,6 +1417,14 @@
 
       const userArea = document.getElementById('user-session-area');
       const userDisplay = document.getElementById('user-display-name');
+      const headerServerBtn = document.getElementById('btn-header-server-config');
+
+      // 상단 헤더 서버 설정 버튼은 오직 슈퍼관리자 로그인 시에만 노출
+      if (viewName === 'teacher' && isSuperAdmin()) {
+        if (headerServerBtn) headerServerBtn.classList.remove('hidden');
+      } else {
+        if (headerServerBtn) headerServerBtn.classList.add('hidden');
+      }
 
       if (viewName === 'login') {
         document.getElementById('view-login').classList.remove('hidden');
@@ -1385,7 +1440,7 @@
         userArea.classList.remove('hidden');
         userArea.classList.add('flex');
         const ad = state.currentUser.data;
-        userDisplay.innerText = `${ad.schoolName} ${ad.teacherName} 선생님`;
+        userDisplay.innerText = `${ad.schoolName} ${ad.teacherName} 선생님${ad.role === 'SUPER_ADMIN' ? ' (슈퍼관리자)' : ''}`;
       }
     }
 
@@ -1925,8 +1980,15 @@
      * =========================================================================
      */
     async function initTeacherDashboard(taskConfig) {
-      if (state.currentUser.data.role === 'SUPER_ADMIN') {
-        document.getElementById('admin-tab-super').classList.remove('hidden');
+      const superTab = document.getElementById('admin-tab-super');
+      const headerServerBtn = document.getElementById('btn-header-server-config');
+
+      if (isSuperAdmin()) {
+        if (superTab) superTab.classList.remove('hidden');
+        if (headerServerBtn) headerServerBtn.classList.remove('hidden');
+      } else {
+        if (superTab) superTab.classList.add('hidden');
+        if (headerServerBtn) headerServerBtn.classList.add('hidden');
       }
 
       if (taskConfig) {
@@ -2934,6 +2996,11 @@
     }
 
     async function loadSuperAdminData() {
+      const superUrlDisplay = document.getElementById('super-pane-server-url-display');
+      if (superUrlDisplay) {
+        superUrlDisplay.innerText = state.serverUrl || '로컬 데모 모드 (서버 미연동)';
+      }
+
       const res = await apiCall('getSuperAdminData', {}, '전체 학교 목록을 불러오는 중입니다...');
       const tbody = document.getElementById('super-admin-tbody');
       tbody.innerHTML = '';
@@ -2993,12 +3060,20 @@
     }
 
     function openServerConfigModal() {
+      if (!isSuperAdmin()) {
+        alert('⚠️ Google Apps Script 백엔드 설정은 슈퍼관리자(SUPER_ADMIN) 로그인 시에만 접근 가능합니다.');
+        return;
+      }
       document.getElementById('input-server-url').value = state.serverUrl;
       document.getElementById('modal-server-config').classList.remove('hidden');
     }
     function closeServerConfigModal() { document.getElementById('modal-server-config').classList.add('hidden'); }
 
     function saveServerUrlConfig() {
+      if (!isSuperAdmin()) {
+        alert('⚠️ 슈퍼관리자 권한이 없습니다.');
+        return;
+      }
       const url = document.getElementById('input-server-url').value.trim();
       state.serverUrl = url;
       localStorage.setItem(STORAGE_KEY_SERVER_URL, url);
@@ -3009,6 +3084,10 @@
     }
 
     function resetServerUrlToDefault() {
+      if (!isSuperAdmin()) {
+        alert('⚠️ 슈퍼관리자 권한이 없습니다.');
+        return;
+      }
       state.serverUrl = DEFAULT_GAS_URL;
       localStorage.setItem(STORAGE_KEY_SERVER_URL, DEFAULT_GAS_URL);
       document.getElementById('input-server-url').value = DEFAULT_GAS_URL;
@@ -3019,6 +3098,10 @@
     }
 
     function resetServerUrlToDemo() {
+      if (!isSuperAdmin()) {
+        alert('⚠️ 슈퍼관리자 권한이 없습니다.');
+        return;
+      }
       state.serverUrl = '';
       localStorage.setItem(STORAGE_KEY_SERVER_URL, '');
       document.getElementById('input-server-url').value = '';
@@ -3028,6 +3111,10 @@
     }
 
     async function testServerConnection() {
+      if (!isSuperAdmin()) {
+        alert('⚠️ 슈퍼관리자 권한이 없습니다.');
+        return;
+      }
       const url = document.getElementById('input-server-url').value.trim();
       if (!url) return;
       try {
