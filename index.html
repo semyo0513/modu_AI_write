@@ -45,41 +45,41 @@
   <!-- 1. 최상단 네비게이션 헤더 -->
   <!-- ========================================================================= -->
   <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm no-print">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-2 sm:space-x-3 min-w-0">
+        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 flex-shrink-0 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
           </svg>
         </div>
-        <div>
-          <div class="flex items-center space-x-2">
-            <h1 class="font-bold text-lg text-slate-900 tracking-tight">모두의 AI 융합 글쓰기</h1>
-            <span class="px-2 py-0.5 text-xs font-semibold bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 rounded-full border border-blue-200">고도화 에디션</span>
+        <div class="min-w-0">
+          <div class="flex items-center space-x-1.5 sm:space-x-2">
+            <h1 class="font-bold text-sm sm:text-lg text-slate-900 tracking-tight truncate">모두의 AI 융합 글쓰기</h1>
+            <span class="px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs font-semibold bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 rounded-full border border-blue-200 whitespace-nowrap">고도화</span>
           </div>
-          <p class="text-xs text-slate-500 hidden sm:block">수정 이력 로그 · AI 1차 자동 채점 · 생기부 과세특 일괄 생성 · 동료평가</p>
+          <p class="text-xs text-slate-500 hidden md:block truncate">수정 이력 로그 · AI 1차 자동 채점 · 생기부 과세특 일괄 생성 · 동료평가</p>
         </div>
       </div>
 
-      <div class="flex items-center space-x-2 sm:space-x-3">
+      <div class="flex items-center space-x-1.5 sm:space-x-3 flex-shrink-0">
         <!-- 서버 연동 상태 뱃지 -->
-        <div id="server-status-pill" class="flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
-          <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
-          <span id="server-status-text">로컬 데모 모드</span>
+        <div id="server-status-pill" class="flex items-center space-x-1.5 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[11px] sm:text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
+          <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-amber-500 animate-pulse"></span>
+          <span id="server-status-text">로컬 데모</span>
         </div>
 
         <!-- 서버 URL 설정 버튼 (슈퍼관리자 전용) -->
-        <button id="btn-header-server-config" onclick="openServerConfigModal()" class="hidden p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition" title="Google Apps Script 웹앱 URL 설정 (슈퍼관리자 전용)">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button id="btn-header-server-config" onclick="openServerConfigModal()" class="hidden p-1.5 sm:p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition" title="Google Apps Script 웹앱 URL 설정 (슈퍼관리자 전용)">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
           </svg>
         </button>
 
         <!-- 사용자 세션 정보 / 로그아웃 버튼 -->
-        <div id="user-session-area" class="hidden items-center space-x-2 pl-2 border-l border-slate-200">
-          <span id="user-display-name" class="text-xs font-semibold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-md"></span>
-          <button onclick="handleLogout()" class="px-2.5 py-1 text-xs font-medium text-rose-600 hover:bg-rose-50 rounded-md transition">로그아웃</button>
+        <div id="user-session-area" class="hidden items-center space-x-1.5 sm:space-x-2 pl-1.5 sm:pl-2 border-l border-slate-200">
+          <span id="user-display-name" class="text-[11px] sm:text-xs font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md max-w-[85px] sm:max-w-[160px] truncate inline-block"></span>
+          <button onclick="handleLogout()" class="px-2 py-0.5 sm:px-2.5 sm:py-1 text-[11px] sm:text-xs font-medium text-rose-600 hover:bg-rose-50 rounded-md transition whitespace-nowrap">로그아웃</button>
         </div>
       </div>
     </div>
@@ -241,7 +241,7 @@
         </div>
 
         <!-- 실시간 타이머 및 글자 수 통계 -->
-        <div class="flex flex-wrap items-center gap-2 sm:gap-4 bg-slate-50 px-4 py-2.5 rounded-xl border border-slate-200">
+        <div class="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 sm:gap-4 bg-slate-50 p-3 sm:px-4 sm:py-2.5 rounded-xl border border-slate-200">
           <div class="flex items-center space-x-1.5 text-xs">
             <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             <span class="text-slate-500">총 작성시간:</span>
@@ -254,7 +254,7 @@
             <span id="timer-active" class="font-mono font-bold text-slate-800 text-sm">00:00:00</span>
           </div>
 
-          <div class="flex items-center space-x-1.5 text-xs pl-2 sm:border-l border-slate-200">
+          <div class="flex items-center space-x-1.5 text-xs pl-0 sm:pl-2 sm:border-l border-slate-200">
             <span class="text-slate-500">글자수:</span>
             <span id="stat-total-chars" class="font-mono font-bold text-blue-600 text-sm">0자</span>
           </div>
@@ -308,10 +308,28 @@
         </div>
       </div>
 
+      <!-- [모바일 전용 탭 전환기] 1024px 미만 화면에서 [본문 글쓰기] ↔ [AI 조교] 탭 전환 제공 -->
+      <div class="lg:hidden flex bg-slate-200/90 p-1 rounded-xl text-xs font-bold gap-1 shadow-inner sticky top-14 sm:top-16 z-30 backdrop-blur bg-white/95 border border-slate-200">
+        <button id="mobile-student-tab-editor" onclick="switchStudentMobileView('editor')" class="flex-1 py-2.5 rounded-lg bg-blue-600 text-white shadow-sm flex items-center justify-center space-x-1.5 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+          <span>✍️ 본문 작성</span>
+        </button>
+        <button id="mobile-student-tab-coach" onclick="switchStudentMobileView('coach')" class="flex-1 py-2.5 rounded-lg text-slate-700 hover:text-slate-900 flex items-center justify-center space-x-1.5 transition">
+          <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+          <span>🤖 AI 사고 코치</span>
+        </button>
+      </div>
+
+      <!-- 모바일 전용 AI 코치 퀵 플로팅 버튼 -->
+      <button id="btn-mobile-open-coach" onclick="switchStudentMobileView('coach')" class="lg:hidden fixed bottom-5 right-5 z-40 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-xs rounded-full shadow-lg shadow-blue-500/30 flex items-center space-x-1.5 active:scale-95 transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+        <span>AI 코치 질문</span>
+      </button>
+
       <!-- 메인 글쓰기 에디터 & AI 조교 2단 레이아웃 -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <!-- 좌측 글쓰기 영역 (8/12) -->
-        <div class="lg:col-span-8 space-y-5">
+        <div id="student-col-editor" class="lg:col-span-8 space-y-5">
           <!-- 과제 안내 & 체크리스트 접이식 -->
           <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm">
             <div class="flex items-center justify-between cursor-pointer" onclick="toggleTaskGuide()">
@@ -365,8 +383,8 @@
         </div>
 
         <!-- 우측 AI 조교 패널 (4/12) -->
-        <div class="lg:col-span-4 space-y-4">
-          <div class="bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col h-[700px] overflow-hidden">
+        <div id="student-col-coach" class="hidden lg:block lg:col-span-4 space-y-4">
+          <div class="bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col h-[75vh] lg:h-[700px] overflow-hidden">
             <div class="p-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white flex items-center justify-between">
               <div class="flex items-center space-x-2.5">
                 <div class="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center backdrop-blur-sm">
@@ -451,7 +469,7 @@
             ⚙️ 과제 및 AI / 동료평가 설정
           </button>
           <button id="admin-tab-roster" onclick="switchAdminTab('roster')" class="py-3 px-4 text-xs font-medium border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap">
-            👥 학생 명렬표 관리 (CSV)
+            👥 학생 명렬표 관리 & 수동 등록
           </button>
           <button id="admin-tab-super" onclick="switchAdminTab('super')" class="py-3 px-4 text-xs font-medium border-b-2 border-transparent text-purple-600 hover:text-purple-900 whitespace-nowrap hidden">
             👑 슈퍼관리자 학교 승인
@@ -459,7 +477,11 @@
         </div>
 
         <!-- [C-1] 탭 1: 학생 수행평가 모니터링 & 채점 -->
-        <div id="admin-pane-monitor" class="p-6 space-y-4">
+        <div id="admin-pane-monitor" class="p-4 sm:p-6 space-y-4">
+          <!-- 모바일 스크롤 힌트 -->
+          <div class="lg:hidden text-[11px] text-slate-500 flex items-center justify-between px-1">
+            <span>👉 좌우로 스크롤하여 상세 점수/기록 확인</span>
+          </div>
           <!-- 툴바: 필터 + 일괄 채점 & 내보내기 버튼 -->
           <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
             <div class="flex flex-wrap items-center gap-2">
@@ -652,34 +674,170 @@
           </div>
         </div>
 
-        <!-- [C-4] 탭 4: 학생 명렬표 관리 (CSV) -->
-        <div id="admin-pane-roster" class="p-6 space-y-6 hidden">
-          <div class="max-w-2xl space-y-4">
-            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
-              <h4 class="font-bold text-xs text-slate-800">1단계: 학생 명렬 CSV 양식 내려받기</h4>
-              <p class="text-xs text-slate-500">엑셀에서 한글이 깨지지 않는 UTF-8 BOM 인코딩 양식 파일입니다.</p>
-              <button onclick="downloadStudentCsvTemplate()" class="px-4 py-2 bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 rounded-lg text-xs font-bold flex items-center space-x-1.5 transition">
-                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                <span>📥 학생 명렬 양식 다운로드 (CSV)</span>
-              </button>
+        <!-- [C-4] 탭 4: 학생 명렬표 관리 및 수동 등록/편집 -->
+        <div id="admin-pane-roster" class="p-4 sm:p-6 space-y-6 hidden">
+          <!-- 안내 및 빠른 통계 배너 -->
+          <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h3 class="font-bold text-sm sm:text-base text-blue-900 flex items-center space-x-2">
+                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                <span>학생 명렬표 관리 & 수동 편집 시스템</span>
+              </h3>
+              <p class="text-xs text-blue-700 mt-1">학생 개별 수기 등록, CSV 파일 일괄 등록, 업로드 전 명단 직접 편집, 등록된 학생 정보 수정 및 삭제를 지원합니다.</p>
             </div>
+            <div class="flex items-center space-x-2 self-start sm:self-center">
+              <span class="px-3 py-1.5 bg-white border border-blue-200 rounded-xl text-xs font-bold text-blue-800 shadow-sm">
+                현재 등록 학생: <span id="roster-total-count" class="text-blue-600 text-sm">0</span>명
+              </span>
+            </div>
+          </div>
 
-            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
-              <h4 class="font-bold text-xs text-slate-800">2단계: 작성한 명렬 파일 업로드</h4>
-              <input id="input-roster-csv" type="file" accept=".csv" onchange="handleRosterFileSelect(event)" class="text-xs text-slate-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-
-              <div id="roster-preview-area" class="hidden mt-3 space-y-2">
-                <p class="text-xs font-bold text-slate-700">업로드 미리보기 (<span id="roster-preview-count">0</span>명 감지됨):</p>
-                <div class="max-h-48 overflow-y-auto border border-slate-200 rounded-lg bg-white p-2">
-                  <table class="w-full text-[11px] text-left">
-                    <thead><tr class="text-slate-500 border-b"><th>학년</th><th>반</th><th>번호</th><th>이름</th></tr></thead>
-                    <tbody id="roster-preview-tbody"></tbody>
-                  </table>
+          <!-- 상단 2단 그리드: [1] 학생 개별 수동 등록 / [2] CSV 양식 및 업로드 -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+            <!-- [1] 학생 개별 수동 등록 폼 (7/12) -->
+            <div class="lg:col-span-7 bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+              <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center space-x-2">
+                  <div class="w-7 h-7 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs">➕</div>
+                  <h4 class="font-bold text-xs sm:text-sm text-slate-800">학생 1명 수동 직접 추가</h4>
                 </div>
-                <button onclick="submitRosterUpload()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition">
-                  명렬 데이터 DB 일괄 등록
+                <span class="text-[11px] text-slate-400">전입생 또는 누락 학생 즉시 등록</span>
+              </div>
+
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-600 mb-1">학년</label>
+                  <input id="input-manual-grade" type="number" min="1" max="6" placeholder="1" class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-600 mb-1">반</label>
+                  <input id="input-manual-class" type="number" min="1" max="30" placeholder="2" class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-600 mb-1">번호</label>
+                  <input id="input-manual-no" type="number" min="1" max="60" placeholder="18" class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-600 mb-1">학생 성명</label>
+                  <input id="input-manual-name" type="text" placeholder="예: 김민준" class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500">
+                </div>
+              </div>
+
+              <div class="flex justify-end pt-1">
+                <button onclick="submitManualAddStudent()" class="w-full sm:w-auto px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-md shadow-blue-500/20 transition flex items-center justify-center space-x-1.5">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                  <span>학생 명렬에 직접 추가</span>
                 </button>
               </div>
+            </div>
+
+            <!-- [2] CSV 양식 다운로드 & 파일 업로드 (5/12) -->
+            <div class="lg:col-span-5 bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200 space-y-3">
+              <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                <h4 class="font-bold text-xs sm:text-sm text-slate-800 flex items-center space-x-1.5">
+                  <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                  <span>CSV 파일 일괄 등록</span>
+                </h4>
+                <button onclick="downloadStudentCsvTemplate()" class="text-[11px] text-blue-600 hover:underline font-semibold flex items-center space-x-1">
+                  <span>📥 양식 다운로드</span>
+                </button>
+              </div>
+              <p class="text-[11px] text-slate-500 leading-relaxed">
+                엑셀에서 작성한 CSV 파일을 업로드하면 <b>등록 전 각 행을 직접 수정·추가·삭제</b>할 수 있습니다.
+              </p>
+              <div>
+                <input id="input-roster-csv" type="file" accept=".csv" onchange="handleRosterFileSelect(event)" class="w-full text-xs text-slate-600 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer">
+              </div>
+            </div>
+          </div>
+
+          <!-- CSV 업로드 미리보기 및 수동 편집 영역 (CSV 파일 선택 시 등장) -->
+          <div id="roster-preview-area" class="hidden bg-white p-4 sm:p-5 rounded-2xl border-2 border-indigo-200 shadow-md space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-indigo-100 pb-3">
+              <div>
+                <div class="flex items-center space-x-2">
+                  <span class="px-2 py-0.5 text-[11px] font-bold bg-indigo-100 text-indigo-700 rounded-md">등록 전 편집 가능</span>
+                  <h4 class="font-bold text-sm text-slate-900">업로드 명단 검토 및 수동 편집 (<span id="roster-preview-count" class="text-indigo-600 font-bold">0</span>명 감지)</h4>
+                </div>
+                <p class="text-xs text-slate-500 mt-0.5">각 칸을 직접 클릭하여 수정하거나, 빠진 학생은 [+ 행 추가]로 보충할 수 있습니다.</p>
+              </div>
+              <div class="flex flex-wrap items-center gap-2">
+                <button onclick="addRosterPreviewRow()" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold flex items-center space-x-1">
+                  <span>➕ 행 추가</span>
+                </button>
+                <button onclick="clearRosterPreview()" class="px-2.5 py-1.5 bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600 rounded-lg text-xs font-medium">
+                  취소
+                </button>
+                <button onclick="submitRosterUpload()" class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold shadow transition flex items-center space-x-1">
+                  <span>💾 이 명단으로 DB 일괄 등록</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="max-h-60 overflow-y-auto border border-slate-200 rounded-xl custom-scrollbar">
+              <table class="w-full text-xs text-left">
+                <thead class="bg-slate-50 text-slate-700 sticky top-0 border-b border-slate-200 z-10">
+                  <tr>
+                    <th class="px-3 py-2 w-20">학년</th>
+                    <th class="px-3 py-2 w-20">반</th>
+                    <th class="px-3 py-2 w-24">번호</th>
+                    <th class="px-3 py-2">학생 성명</th>
+                    <th class="px-3 py-2 text-right w-16">삭제</th>
+                  </tr>
+                </thead>
+                <tbody id="roster-preview-tbody" class="divide-y divide-slate-100 bg-white"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- [3] 현재 등록된 학생 명단 관리 테이블 (수정, 삭제, 검색, 필터) -->
+          <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h4 class="font-bold text-sm sm:text-base text-slate-900 flex items-center space-x-2">
+                  <span>📋 현재 등록된 학생 명렬표</span>
+                  <span id="roster-registered-count-badge" class="px-2 py-0.5 text-xs font-bold bg-blue-100 text-blue-700 rounded-full">0명</span>
+                </h4>
+                <p class="text-xs text-slate-500 mt-0.5">등록된 학생의 학번/이름을 수정하거나 불필요한 학생을 삭제할 수 있습니다.</p>
+              </div>
+
+              <!-- 검색 및 필터 -->
+              <div class="flex flex-wrap items-center gap-2">
+                <select id="roster-filter-grade" onchange="renderRosterManagePane()" class="text-xs px-2.5 py-1.5 bg-slate-50 border border-slate-300 rounded-lg">
+                  <option value="ALL">전체 학년</option>
+                  <option value="1">1학년</option>
+                  <option value="2">2학년</option>
+                  <option value="3">3학년</option>
+                </select>
+                <select id="roster-filter-class" onchange="renderRosterManagePane()" class="text-xs px-2.5 py-1.5 bg-slate-50 border border-slate-300 rounded-lg">
+                  <option value="ALL">전체 반</option>
+                  <option value="1">1반</option>
+                  <option value="2">2반</option>
+                  <option value="3">3반</option>
+                </select>
+                <input id="roster-search-input" oninput="renderRosterManagePane()" type="text" placeholder="학생 성명 검색..." class="text-xs px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg w-32 sm:w-44">
+              </div>
+            </div>
+
+            <!-- 모바일 스크롤 안내 -->
+            <div class="lg:hidden text-[11px] text-slate-500 flex items-center justify-between px-1">
+              <span>👉 좌우로 스크롤하여 상세 정보 및 관리 버튼 확인</span>
+            </div>
+
+            <!-- 등록된 학생 테이블 -->
+            <div class="overflow-x-auto border border-slate-200 rounded-xl custom-scrollbar">
+              <table class="w-full text-xs text-left">
+                <thead class="bg-slate-50 text-slate-700 font-semibold border-b border-slate-200">
+                  <tr>
+                    <th class="px-4 py-2.5">학년/반/번호</th>
+                    <th class="px-4 py-2.5">학생 성명</th>
+                    <th class="px-4 py-2.5 text-center">비밀번호 보안</th>
+                    <th class="px-4 py-2.5 text-center">수행평가 제출 상태</th>
+                    <th class="px-4 py-2.5 text-right">학생 정보 관리</th>
+                  </tr>
+                </thead>
+                <tbody id="roster-registered-tbody" class="divide-y divide-slate-100 bg-white"></tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -1006,6 +1164,53 @@
       <div class="flex space-x-2 pt-1">
         <button onclick="closeStudentPasswordSetupModal()" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition">취소</button>
         <button onclick="submitStudentPasswordSetup()" class="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-md transition">설정 및 시작</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- [MODAL 6] 학생 정보 수동 편집 모달 -->
+  <div id="modal-edit-student" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-2xl shadow-xl border border-slate-200 p-6 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center space-x-2">
+          <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center font-bold">✏️</div>
+          <h3 class="font-bold text-sm sm:text-base text-slate-900">학생 정보 수정</h3>
+        </div>
+        <button onclick="closeEditStudentModal()" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
+      </div>
+
+      <input type="hidden" id="edit-student-old-key">
+
+      <div class="space-y-3 text-xs">
+        <div class="grid grid-cols-3 gap-2">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">학년</label>
+            <input id="edit-student-grade" type="number" min="1" max="6" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">반</label>
+            <input id="edit-student-class" type="number" min="1" max="30" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">번호</label>
+            <input id="edit-student-no" type="number" min="1" max="60" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">학생 성명</label>
+          <input id="edit-student-name" type="text" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <p class="text-[11px] text-slate-400 leading-relaxed bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+          💡 학년/반/번호/이름 수정 시 기존에 학생이 작성 중인 수행평가 데이터 및 수정 이력, AI 챗봇 로그도 변경된 정보로 자동 연계됩니다.
+        </p>
+      </div>
+
+      <div class="flex justify-end space-x-2 pt-2 border-t border-slate-100">
+        <button onclick="closeEditStudentModal()" class="px-3.5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg transition">취소</button>
+        <button onclick="submitEditStudent()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg shadow transition">수정사항 저장</button>
       </div>
     </div>
   </div>
@@ -1470,6 +1675,8 @@
       const task = state.currentTask;
       const writing = state.currentWriting;
       const student = state.currentUser.data;
+
+      switchStudentMobileView('editor');
 
       document.getElementById('student-header-badge').innerText = `${student.grade}학년 수행평가`;
       document.getElementById('student-task-title').innerText = task.taskTitle;
@@ -2014,6 +2221,7 @@
       });
 
       if (tab === 'records') renderBatchRecordsPane();
+      if (tab === 'roster') renderRosterManagePane();
       if (tab === 'super') loadSuperAdminData();
     }
 
@@ -2028,6 +2236,7 @@
         state.teacherStudents = res.students || [];
         updateTeacherDashboardStats();
         renderTeacherStudentTable();
+        renderRosterManagePane();
       }
     }
 
@@ -2048,6 +2257,11 @@
       document.getElementById('stat-teacher-submitted').innerText = `${submitted}명`;
       document.getElementById('stat-teacher-writing').innerText = `${writing}명`;
       document.getElementById('stat-teacher-notstarted').innerText = `${notStarted}명`;
+
+      const rosterCountEl = document.getElementById('roster-total-count');
+      if (rosterCountEl) rosterCountEl.innerText = total;
+      const rosterBadge = document.getElementById('roster-registered-count-badge');
+      if (rosterBadge) rosterBadge.innerText = `${total}명`;
 
       const rate = total > 0 ? Math.round((submitted / total) * 100) : 0;
       document.getElementById('stat-teacher-submit-rate').innerText = `제출률 ${rate}%`;
@@ -2076,7 +2290,7 @@
       });
 
       if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="9" class="text-center py-8 text-slate-400">일치하는 학생이 없습니다.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="10" class="text-center py-8 text-slate-400">일치하는 학생이 없습니다.</td></tr>';
         return;
       }
 
@@ -2796,7 +3010,192 @@
       URL.revokeObjectURL(url);
     }
 
+    /**
+     * =========================================================================
+     * [신규] 학생 명렬표 수동 관리 (수동 등록, 수정, 삭제, CSV 업로드 전 편집)
+     * =========================================================================
+     */
     let pendingRoster = [];
+
+    // [1] 학생 개별 수동 등록
+    async function submitManualAddStudent() {
+      const g = parseInt(document.getElementById('input-manual-grade').value, 10);
+      const c = parseInt(document.getElementById('input-manual-class').value, 10);
+      const n = parseInt(document.getElementById('input-manual-no').value, 10);
+      const name = (document.getElementById('input-manual-name').value || '').trim();
+
+      if (!g || !c || !n || !name) {
+        alert('학년, 반, 번호, 학생 성명을 모두 빠짐없이 입력해 주세요.');
+        return;
+      }
+
+      const schoolName = state.currentUser.data.schoolName;
+      const res = await apiCall('addStudent', {
+        schoolName,
+        grade: g,
+        classNo: c,
+        studentNo: n,
+        studentName: name
+      }, '학생을 등록하고 있습니다...');
+
+      if (res && res.success) {
+        alert(res.message || `${name} 학생이 성공적으로 등록되었습니다!`);
+        document.getElementById('input-manual-name').value = '';
+        document.getElementById('input-manual-no').value = n + 1; // 다음 번호 편의 증분
+        await loadTeacherStudentData();
+      } else {
+        alert(res.message || '학생 등록에 실패했습니다.');
+      }
+    }
+
+    // [2] 학생 정보 수정 모달 열기 및 저장
+    function openEditStudentModal(studentKey) {
+      const student = state.teacherStudents.find(s => s.studentKey === studentKey);
+      if (!student) {
+        alert('학생 정보를 찾을 수 없습니다.');
+        return;
+      }
+
+      document.getElementById('edit-student-old-key').value = student.studentKey;
+      document.getElementById('edit-student-grade').value = student.grade;
+      document.getElementById('edit-student-class').value = student.classNo;
+      document.getElementById('edit-student-no').value = student.studentNo;
+      document.getElementById('edit-student-name').value = student.studentName;
+
+      document.getElementById('modal-edit-student').classList.remove('hidden');
+    }
+
+    function closeEditStudentModal() {
+      document.getElementById('modal-edit-student').classList.add('hidden');
+    }
+
+    async function submitEditStudent() {
+      const oldStudentKey = document.getElementById('edit-student-old-key').value;
+      const g = parseInt(document.getElementById('edit-student-grade').value, 10);
+      const c = parseInt(document.getElementById('edit-student-class').value, 10);
+      const n = parseInt(document.getElementById('edit-student-no').value, 10);
+      const name = (document.getElementById('edit-student-name').value || '').trim();
+
+      if (!oldStudentKey || !g || !c || !n || !name) {
+        alert('모든 항목을 올바르게 입력해 주세요.');
+        return;
+      }
+
+      const schoolName = state.currentUser.data.schoolName;
+      const res = await apiCall('updateStudent', {
+        schoolName,
+        oldStudentKey,
+        grade: g,
+        classNo: c,
+        studentNo: n,
+        studentName: name
+      }, '학생 정보를 수정하고 있습니다...');
+
+      if (res && res.success) {
+        alert(res.message || '학생 정보가 성공적으로 수정되었습니다.');
+        closeEditStudentModal();
+        await loadTeacherStudentData();
+      } else {
+        alert(res.message || '학생 정보 수정에 실패했습니다.');
+      }
+    }
+
+    // [3] 학생 삭제
+    async function confirmDeleteStudent(studentKey, studentName) {
+      if (!confirm(`'${studentName}' 학생을 명렬표에서 삭제하시겠습니까?\n(작성된 수행평가 및 데이터가 함께 정리됩니다)`)) {
+        return;
+      }
+
+      const schoolName = state.currentUser.data.schoolName;
+      const res = await apiCall('deleteStudent', {
+        schoolName,
+        studentKey
+      }, '학생을 삭제하고 있습니다...');
+
+      if (res && res.success) {
+        alert(res.message || '학생이 삭제되었습니다.');
+        await loadTeacherStudentData();
+      } else {
+        alert(res.message || '학생 삭제에 실패했습니다.');
+      }
+    }
+
+    // [4] 등록된 학생 명렬표 관리 렌더링
+    function renderRosterManagePane() {
+      const tbody = document.getElementById('roster-registered-tbody');
+      if (!tbody) return;
+
+      const gradeFilter = document.getElementById('roster-filter-grade') ? document.getElementById('roster-filter-grade').value : 'ALL';
+      const classFilter = document.getElementById('roster-filter-class') ? document.getElementById('roster-filter-class').value : 'ALL';
+      const search = (document.getElementById('roster-search-input') ? document.getElementById('roster-search-input').value : '').trim().toLowerCase();
+
+      tbody.innerHTML = '';
+      const list = state.teacherStudents || [];
+
+      const filtered = list.filter(st => {
+        if (gradeFilter !== 'ALL' && String(st.grade) !== gradeFilter) return false;
+        if (classFilter !== 'ALL' && String(st.classNo) !== classFilter) return false;
+        if (search && !st.studentName.toLowerCase().includes(search)) return false;
+        return true;
+      });
+
+      const countBadge = document.getElementById('roster-registered-count-badge');
+      if (countBadge) countBadge.innerText = `${filtered.length}명 / 전체 ${list.length}명`;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-8 text-slate-400">등록된 학생이 없거나 일치하는 검색 결과가 없습니다.</td></tr>';
+        return;
+      }
+
+      filtered.sort((a, b) => {
+        if (a.grade !== b.grade) return a.grade - b.grade;
+        if (a.classNo !== b.classNo) return a.classNo - b.classNo;
+        return a.studentNo - b.studentNo;
+      });
+
+      filtered.forEach(st => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50 transition';
+
+        let statusText = '<span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-slate-100 text-slate-500">미시작</span>';
+        if (st.status === 'SUBMITTED') {
+          statusText = '<span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-100 text-emerald-700">제출완료</span>';
+        } else if (st.status === 'TEMP_SAVED') {
+          statusText = '<span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-100 text-amber-700">작성중</span>';
+        }
+
+        const passBadge = st.hasPassword ?
+          `<span class="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+             <span>🔒 비번설정됨</span>
+             <button onclick="promptResetStudentPassword('${st.studentKey}', '${escapeHtml(st.studentName)}')" class="text-rose-600 hover:text-rose-800 font-bold ml-1 hover:underline" title="비밀번호 초기화">초기화</button>
+           </span>` :
+          `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-500">🔓 미설정 (접속시 등록)</span>`;
+
+        tr.innerHTML = `
+          <td class="px-4 py-3 font-semibold text-slate-900 whitespace-nowrap">
+            <span class="px-2 py-0.5 bg-blue-50 text-blue-700 font-mono text-xs rounded-md border border-blue-200">${st.grade}-${st.classNo} ${st.studentNo}번</span>
+          </td>
+          <td class="px-4 py-3 font-bold text-slate-800">${escapeHtml(st.studentName)}</td>
+          <td class="px-4 py-3 text-center">${passBadge}</td>
+          <td class="px-4 py-3 text-center">${statusText}</td>
+          <td class="px-4 py-3 text-right whitespace-nowrap">
+            <div class="flex items-center justify-end space-x-1.5">
+              <button onclick="openEditStudentModal('${st.studentKey}')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 text-slate-700 rounded-lg text-xs font-semibold flex items-center space-x-1 transition" title="학생 정보 수정">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                <span>수정</span>
+              </button>
+              <button onclick="confirmDeleteStudent('${st.studentKey}', '${escapeHtml(st.studentName)}')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-rose-50 hover:text-rose-700 text-slate-600 rounded-lg text-xs font-semibold flex items-center space-x-1 transition" title="학생 삭제">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                <span>삭제</span>
+              </button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // [5] CSV 파일 선택 및 수동 편집 가능한 미리보기 렌더링
     function handleRosterFileSelect(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -2805,50 +3204,155 @@
       reader.onload = function(e) {
         const text = e.target.result;
         const lines = text.split(/\r\n|\n/).filter(l => l.trim() !== '');
-        if (lines.length < 2) return;
+        if (lines.length < 2) {
+          alert('CSV 파일에 유효한 학생 데이터가 없습니다.');
+          return;
+        }
 
         pendingRoster = [];
-        const tbody = document.getElementById('roster-preview-tbody');
-        tbody.innerHTML = '';
-
         for (let i = 1; i < lines.length; i++) {
           const parts = lines[i].split(',').map(s => s.trim().replace(/^"|"$/g, ''));
           if (parts.length >= 4) {
             const item = {
-              grade: parseInt(parts[0], 10),
-              classNo: parseInt(parts[1], 10),
-              studentNo: parseInt(parts[2], 10),
-              studentName: parts[3]
+              grade: parseInt(parts[0], 10) || 1,
+              classNo: parseInt(parts[1], 10) || 1,
+              studentNo: parseInt(parts[2], 10) || i,
+              studentName: parts[3] || ''
             };
-            if (item.grade && item.classNo && item.studentNo && item.studentName) {
+            if (item.studentName) {
               pendingRoster.push(item);
-              const tr = document.createElement('tr');
-              tr.className = 'border-b';
-              tr.innerHTML = `<td>${item.grade}</td><td>${item.classNo}</td><td>${item.studentNo}</td><td>${escapeHtml(item.studentName)}</td>`;
-              tbody.appendChild(tr);
             }
           }
         }
-        document.getElementById('roster-preview-count').innerText = pendingRoster.length;
+        renderRosterPreviewTable();
         document.getElementById('roster-preview-area').classList.remove('hidden');
       };
       reader.readAsText(file, 'UTF-8');
     }
 
+    function renderRosterPreviewTable() {
+      const tbody = document.getElementById('roster-preview-tbody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      document.getElementById('roster-preview-count').innerText = pendingRoster.length;
+
+      pendingRoster.forEach((item, idx) => {
+        const tr = document.createElement('tr');
+        tr.className = 'border-b border-slate-100 hover:bg-slate-50';
+        tr.innerHTML = `
+          <td class="px-3 py-1.5">
+            <input type="number" min="1" max="6" value="${item.grade}" onchange="updateRosterPreviewItem(${idx}, 'grade', this.value)" class="w-16 px-2 py-1 text-xs border rounded bg-white font-mono">
+          </td>
+          <td class="px-3 py-1.5">
+            <input type="number" min="1" max="30" value="${item.classNo}" onchange="updateRosterPreviewItem(${idx}, 'classNo', this.value)" class="w-16 px-2 py-1 text-xs border rounded bg-white font-mono">
+          </td>
+          <td class="px-3 py-1.5">
+            <input type="number" min="1" max="60" value="${item.studentNo}" onchange="updateRosterPreviewItem(${idx}, 'studentNo', this.value)" class="w-20 px-2 py-1 text-xs border rounded bg-white font-mono">
+          </td>
+          <td class="px-3 py-1.5">
+            <input type="text" value="${escapeHtml(item.studentName)}" onchange="updateRosterPreviewItem(${idx}, 'studentName', this.value)" class="w-full px-2 py-1 text-xs border rounded bg-white font-semibold">
+          </td>
+          <td class="px-3 py-1.5 text-right">
+            <button onclick="deleteRosterPreviewRow(${idx})" class="p-1 text-slate-400 hover:text-rose-600 rounded" title="이 행 삭제">✕</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function updateRosterPreviewItem(idx, key, val) {
+      if (pendingRoster[idx]) {
+        if (key === 'grade' || key === 'classNo' || key === 'studentNo') {
+          pendingRoster[idx][key] = parseInt(val, 10) || 1;
+        } else {
+          pendingRoster[idx][key] = String(val || '').trim();
+        }
+      }
+    }
+
+    function addRosterPreviewRow() {
+      const nextNo = pendingRoster.length > 0 ? (pendingRoster[pendingRoster.length - 1].studentNo + 1) : 1;
+      const lastGrade = pendingRoster.length > 0 ? pendingRoster[pendingRoster.length - 1].grade : 1;
+      const lastClass = pendingRoster.length > 0 ? pendingRoster[pendingRoster.length - 1].classNo : 1;
+      pendingRoster.push({
+        grade: lastGrade,
+        classNo: lastClass,
+        studentNo: nextNo,
+        studentName: ''
+      });
+      renderRosterPreviewTable();
+    }
+
+    function deleteRosterPreviewRow(idx) {
+      pendingRoster.splice(idx, 1);
+      renderRosterPreviewTable();
+    }
+
+    function clearRosterPreview() {
+      pendingRoster = [];
+      document.getElementById('roster-preview-area').classList.add('hidden');
+      document.getElementById('input-roster-csv').value = '';
+    }
+
     async function submitRosterUpload() {
-      if (pendingRoster.length === 0) return;
+      const validRoster = pendingRoster.filter(r => r.grade && r.classNo && r.studentNo && r.studentName && r.studentName.trim() !== '');
+      if (validRoster.length === 0) {
+        alert('등록할 유효한 학생 명단이 없습니다. 학생 성명이 비어있는 행이 없는지 확인해 주세요.');
+        return;
+      }
+
       const res = await apiCall('uploadStudentRoster', {
         schoolName: state.currentUser.data.schoolName,
-        roster: pendingRoster
+        roster: validRoster
       }, '학생 명렬을 등록하고 있습니다...');
 
       if (res && res.success) {
-        alert(res.message || '학생 명렬 등록이 완료되었습니다!');
-        document.getElementById('roster-preview-area').classList.add('hidden');
-        document.getElementById('input-roster-csv').value = '';
+        alert(res.message || `${validRoster.length}명의 학생 등록이 완료되었습니다!`);
+        clearRosterPreview();
         await loadTeacherStudentData();
+      } else {
+        alert(res.message || '학생 명렬 등록에 실패했습니다.');
       }
     }
+
+    // [6] 모바일 화면 최적화 탭 전환기
+    function switchStudentMobileView(tab) {
+      const editorCol = document.getElementById('student-col-editor');
+      const coachCol = document.getElementById('student-col-coach');
+      const tabEditor = document.getElementById('mobile-student-tab-editor');
+      const tabCoach = document.getElementById('mobile-student-tab-coach');
+      const fab = document.getElementById('btn-mobile-open-coach');
+      if (!editorCol || !coachCol) return;
+
+      if (tab === 'editor') {
+        editorCol.classList.remove('hidden');
+        coachCol.classList.add('hidden');
+        coachCol.classList.remove('block');
+        if (tabEditor) tabEditor.className = 'flex-1 py-2.5 rounded-lg bg-blue-600 text-white shadow-sm flex items-center justify-center space-x-1.5 transition font-bold';
+        if (tabCoach) tabCoach.className = 'flex-1 py-2.5 rounded-lg text-slate-700 hover:text-slate-900 flex items-center justify-center space-x-1.5 transition font-medium';
+        if (fab) fab.classList.remove('hidden');
+      } else {
+        editorCol.classList.add('hidden');
+        coachCol.classList.remove('hidden');
+        coachCol.classList.add('block');
+        if (tabEditor) tabEditor.className = 'flex-1 py-2.5 rounded-lg text-slate-700 hover:text-slate-900 flex items-center justify-center space-x-1.5 transition font-medium';
+        if (tabCoach) tabCoach.className = 'flex-1 py-2.5 rounded-lg bg-purple-700 text-white shadow-sm flex items-center justify-center space-x-1.5 transition font-bold';
+        if (fab) fab.classList.add('hidden');
+      }
+    }
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 1024) {
+        const editorCol = document.getElementById('student-col-editor');
+        const coachCol = document.getElementById('student-col-coach');
+        if (editorCol) editorCol.classList.remove('hidden');
+        if (coachCol) {
+          coachCol.classList.remove('hidden');
+          coachCol.classList.add('block');
+        }
+      }
+    });
 
     function getPresetTask(presetType) {
       if (presetType === 'persuasive') {
@@ -3458,11 +3962,73 @@
           data.roster.forEach(r => {
             const key = `${data.schoolName}_${r.grade}_${r.classNo}_${r.studentNo}_${r.studentName}`;
             if (!db.students.find(s => s.studentKey === key)) {
-              db.students.push({ studentKey: key, schoolName: data.schoolName, grade: r.grade, classNo: r.classNo, studentNo: r.studentNo, studentName: r.studentName });
+              db.students.push({ studentKey: key, schoolName: data.schoolName, grade: r.grade, classNo: r.classNo, studentNo: r.studentNo, studentName: r.studentName, password: '' });
             }
           });
           saveMockDb(db);
           return { success: true, message: `${data.roster.length}명의 학생이 등록되었습니다.` };
+        }
+
+        case 'addStudent': {
+          const g = parseInt(data.grade, 10);
+          const c = parseInt(data.classNo, 10);
+          const n = parseInt(data.studentNo, 10);
+          const name = String(data.studentName || '').trim();
+          if (!data.schoolName || !g || !c || !n || !name) {
+            return { success: false, message: '모든 학생 정보를 입력해 주세요.' };
+          }
+          const key = `${data.schoolName}_${g}_${c}_${n}_${name}`;
+          if (db.students.find(s => s.studentKey === key || (s.schoolName === data.schoolName && s.grade === g && s.classNo === c && s.studentNo === n))) {
+            return { success: false, message: '해당 학년/반/번호의 학생이 이미 등록되어 있습니다.' };
+          }
+          db.students.push({ studentKey: key, schoolName: data.schoolName, grade: g, classNo: c, studentNo: n, studentName: name, password: '' });
+          saveMockDb(db);
+          return { success: true, message: `${name} 학생이 성공적으로 등록되었습니다.` };
+        }
+
+        case 'updateStudent': {
+          const g = parseInt(data.grade, 10);
+          const c = parseInt(data.classNo, 10);
+          const n = parseInt(data.studentNo, 10);
+          const name = String(data.studentName || '').trim();
+          const target = db.students.find(s => s.studentKey === data.oldStudentKey);
+          if (!target) return { success: false, message: '수정할 대상 학생을 찾을 수 없습니다.' };
+          const newKey = `${data.schoolName}_${g}_${c}_${n}_${name}`;
+          if (newKey !== data.oldStudentKey && db.students.find(s => s.studentKey === newKey)) {
+            return { success: false, message: '변경하려는 학번/이름의 다른 학생이 이미 등록되어 있습니다.' };
+          }
+          target.grade = g;
+          target.classNo = c;
+          target.studentNo = n;
+          target.studentName = name;
+          target.studentKey = newKey;
+
+          // writings 키 동기화
+          for (const wid in db.writings) {
+            if (db.writings[wid].studentKey === data.oldStudentKey) {
+              db.writings[wid].studentKey = newKey;
+              const newWid = wid.replace(data.oldStudentKey, newKey);
+              if (newWid !== wid) {
+                db.writings[newWid] = db.writings[wid];
+                delete db.writings[wid];
+              }
+            }
+          }
+          saveMockDb(db);
+          return { success: true, message: '학생 정보가 성공적으로 수정되었습니다.' };
+        }
+
+        case 'deleteStudent': {
+          const idx = db.students.findIndex(s => s.studentKey === data.studentKey && s.schoolName === data.schoolName);
+          if (idx === -1) return { success: false, message: '삭제할 대상 학생을 찾을 수 없습니다.' };
+          db.students.splice(idx, 1);
+          for (const wid in db.writings) {
+            if (db.writings[wid].studentKey === data.studentKey) {
+              delete db.writings[wid];
+            }
+          }
+          saveMockDb(db);
+          return { success: true, message: '학생이 명렬표에서 삭제되었습니다.' };
         }
 
         case 'getSchoolWritings': {

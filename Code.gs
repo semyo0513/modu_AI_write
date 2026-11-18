@@ -197,6 +197,15 @@ function doPost(e) {
       case 'uploadStudentRoster':
         res = handleUploadStudentRoster(data);
         break;
+      case 'addStudent':
+        res = handleAddStudent(data);
+        break;
+      case 'updateStudent':
+        res = handleUpdateStudent(data);
+        break;
+      case 'deleteStudent':
+        res = handleDeleteStudent(data);
+        break;
       case 'getSchoolWritings':
         res = handleGetSchoolWritings(data);
         break;
@@ -824,6 +833,173 @@ function handleUploadStudentRoster(data) {
     message: rowsToAdd.length + '명의 학생이 등록되었습니다.',
     addedCount: rowsToAdd.length
   };
+}
+
+/**
+ * [수동 추가] 교사의 단일 학생 직접 수동 등록
+ */
+function handleAddStudent(data) {
+  var schoolName = data.schoolName;
+  var grade = parseInt(data.grade, 10);
+  var classNo = parseInt(data.classNo, 10);
+  var studentNo = parseInt(data.studentNo, 10);
+  var studentName = String(data.studentName || '').trim();
+
+  if (!schoolName || !grade || !classNo || !studentNo || !studentName) {
+    return { success: false, message: '학년, 반, 번호, 학생 성명을 모두 입력해 주세요.' };
+  }
+
+  var studentKey = schoolName + '_' + grade + '_' + classNo + '_' + studentNo + '_' + studentName;
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sStudents = ss.getSheetByName(SHEET_STUDENTS);
+  if (!sStudents) {
+    return { success: false, message: 'Students 시트가 존재하지 않습니다.' };
+  }
+
+  // 중복 확인 (키 또는 학년/반/번호 중복 방지)
+  if (sStudents.getLastRow() > 1) {
+    var sData = sStudents.getDataRange().getValues();
+    for (var i = 1; i < sData.length; i++) {
+      if (sData[i][0] === studentKey ||
+         (sData[i][1] === schoolName &&
+          parseInt(sData[i][2], 10) === grade &&
+          parseInt(sData[i][3], 10) === classNo &&
+          parseInt(sData[i][4], 10) === studentNo)) {
+        return { success: false, message: '해당 학년/반/번호의 학생이 이미 등록되어 있습니다.' };
+      }
+    }
+  }
+
+  getStudentPasswordColIndex(sStudents); // 컬럼 확인
+  var nowStr = formatDate(new Date());
+  sStudents.appendRow([studentKey, schoolName, grade, classNo, studentNo, studentName, '', nowStr]);
+
+  return {
+    success: true,
+    message: studentName + ' 학생이 명렬표에 성공적으로 등록되었습니다.',
+    student: {
+      studentKey: studentKey,
+      schoolName: schoolName,
+      grade: grade,
+      classNo: classNo,
+      studentNo: studentNo,
+      studentName: studentName,
+      hasPassword: false
+    }
+  };
+}
+
+/**
+ * [수동 편집] 등록된 학생 정보(학년, 반, 번호, 이름) 수정
+ */
+function handleUpdateStudent(data) {
+  var schoolName = data.schoolName;
+  var oldStudentKey = data.oldStudentKey;
+  var grade = parseInt(data.grade, 10);
+  var classNo = parseInt(data.classNo, 10);
+  var studentNo = parseInt(data.studentNo, 10);
+  var studentName = String(data.studentName || '').trim();
+
+  if (!schoolName || !oldStudentKey || !grade || !classNo || !studentNo || !studentName) {
+    return { success: false, message: '수정할 학생 정보를 모두 올바르게 입력해 주세요.' };
+  }
+
+  var newStudentKey = schoolName + '_' + grade + '_' + classNo + '_' + studentNo + '_' + studentName;
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sStudents = ss.getSheetByName(SHEET_STUDENTS);
+  if (!sStudents || sStudents.getLastRow() <= 1) {
+    return { success: false, message: '학생 명렬 데이터가 없습니다.' };
+  }
+
+  var sData = sStudents.getDataRange().getValues();
+  var targetRow = -1;
+
+  for (var i = 1; i < sData.length; i++) {
+    if (sData[i][0] === oldStudentKey) {
+      targetRow = i + 1;
+    } else if (sData[i][0] === newStudentKey) {
+      return { success: false, message: '변경하려는 학번/이름을 가진 다른 학생이 이미 존재합니다.' };
+    }
+  }
+
+  if (targetRow === -1) {
+    return { success: false, message: '수정 대상 학생을 찾을 수 없습니다.' };
+  }
+
+  // Students 시트 행 정보 갱신
+  sStudents.getRange(targetRow, 1).setValue(newStudentKey);
+  sStudents.getRange(targetRow, 3).setValue(grade);
+  sStudents.getRange(targetRow, 4).setValue(classNo);
+  sStudents.getRange(targetRow, 5).setValue(studentNo);
+  sStudents.getRange(targetRow, 6).setValue(studentName);
+
+  // studentKey가 변경된 경우 연계 시트(Writings, Revisions, ChatLogs, PeerReviews) 키 동기화
+  if (oldStudentKey !== newStudentKey) {
+    updateRelatedStudentKey(ss, oldStudentKey, newStudentKey);
+  }
+
+  return {
+    success: true,
+    message: '학생 정보가 성공적으로 수정되었습니다.',
+    newStudentKey: newStudentKey
+  };
+}
+
+/**
+ * [수동 삭제] 등록된 학생 명렬 삭제
+ */
+function handleDeleteStudent(data) {
+  var schoolName = data.schoolName;
+  var studentKey = data.studentKey;
+
+  if (!schoolName || !studentKey) {
+    return { success: false, message: '학생 식별 키가 필요합니다.' };
+  }
+
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sStudents = ss.getSheetByName(SHEET_STUDENTS);
+  if (!sStudents || sStudents.getLastRow() <= 1) {
+    return { success: false, message: '학생 데이터가 없습니다.' };
+  }
+
+  var sData = sStudents.getDataRange().getValues();
+  for (var i = 1; i < sData.length; i++) {
+    if (sData[i][0] === studentKey && sData[i][1] === schoolName) {
+      sStudents.deleteRow(i + 1);
+      return {
+        success: true,
+        message: '해당 학생이 명렬표에서 안전하게 삭제되었습니다.'
+      };
+    }
+  }
+
+  return { success: false, message: '삭제할 대상 학생을 찾을 수 없습니다.' };
+}
+
+function updateRelatedStudentKey(ss, oldKey, newKey) {
+  var sheets = [SHEET_WRITINGS, SHEET_REVISIONS, SHEET_CHATLOGS, SHEET_PEER_REVIEWS];
+  for (var s = 0; s < sheets.length; s++) {
+    var sheet = ss.getSheetByName(sheets[s]);
+    if (sheet && sheet.getLastRow() > 1) {
+      var data = sheet.getDataRange().getValues();
+      for (var r = 1; r < data.length; r++) {
+        if (sheets[s] === SHEET_WRITINGS) {
+          if (data[r][1] === oldKey) {
+            sheet.getRange(r + 1, 2).setValue(newKey);
+            var oldWid = String(data[r][0]);
+            sheet.getRange(r + 1, 1).setValue(oldWid.replace(oldKey, newKey));
+          }
+        } else if (sheets[s] === SHEET_REVISIONS || sheets[s] === SHEET_CHATLOGS) {
+          if (data[r][1] === oldKey) {
+            sheet.getRange(r + 1, 2).setValue(newKey);
+          }
+        } else if (sheets[s] === SHEET_PEER_REVIEWS) {
+          if (data[r][1] === oldKey) sheet.getRange(r + 1, 2).setValue(newKey);
+          if (data[r][2] === oldKey) sheet.getRange(r + 1, 3).setValue(newKey);
+        }
+      }
+    }
+  }
 }
 
 function handleGetSchoolWritings(data) {
